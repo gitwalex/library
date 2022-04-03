@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="defaultInfoText">Keine weiteren Informationen vorhanden.</string>
+    <string name="dontshowagain">Hinweis nicht noch einmal zeigen</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="ok">@android:string/ok</string>
+    <string name="buyNow">Jetzt kaufen</string>
+    <string name="infoDialogTitle">Information</string>
+    <string name="bewerteApp">Bewerte %1s</string>
+    <string name="never">Nie</string>
+    <string name="later">Später</string>
+    <string name="wieFindestDuDieApp">Wie findest Du diese App? Bitte bewerte uns im Google Play Store.</string>
+    <string name="NoInternetConnection">Keine Internetverbindung</string>
+    <string name="NoInternetConnectionMsg">Es ist keine Verbindung ins Internet vorhanden.</string>
+
+
+</resources>

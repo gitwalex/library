@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="notification_eventservice" type="id" />
+    <item name="itemid" type="id" />
+    <item name="job_daily" type="id" />
+    <item name="job_after_reboot" type="id" />
+    <item name="job_db_save" type="id" />
+
+</resources>

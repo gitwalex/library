@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="alternativelayoutHint" translatable="false">Alternative Werbung wenn kein AdView geladen werden kann. Ist als attribut
+        \'app:alternativeLayout\' zu setzen. Der Button muss als id \'alternativeViewButton\' erhalten. Dann
+        klappts auch mit der Animation :-)</string>
+    <string name="defaultInfoText">No More Information.</string>
+    <string name="dontshowagain">Don\'t show hint again</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">@android:string/ok</string>
+    <string name="buyNow">Buy now</string>
+    <string name="infoDialogTitle">Information</string>
+    <string name="timerViewText" translatable="false">%d hr %d mins</string>
+    <string name="bewerteApp">Rate %1s</string>
+    <string name="never">Never</string>
+    <string name="later">Later</string>
+    <string name="wieFindestDuDieApp">How do you like this app? Please rate us on Play Store.</string>
+    <string name="NoInternetConnection">Keine Internetverbindung</string>
+    <string name="NoInternetConnectionMsg">Es ist keine Verbindung ins Internet vorhanden.</string>
+    <string name="btnOK" translatable="false">@android:string/ok</string>
+    <string name="dbRestore">Restore Datenbank</string>
+    <string name="dbRestoreFehler">IO-fehler beim Restore (%1$s)</string>
+    <string name="dbRestoreFileNotFnd">Datei %1$s nicht gefunden.</string>
+    <string name="dbRestoreFileError">Fehler beim Zugriff auf %1$s</string>
+    <string name="dbRestoreOK">Sicherung aus %1$s erfolgreich zurückgespielt.</string>
+    <string name="btnCancel">Abbrechen</string>
+    <string name="notiDoSaveDatabase">Sicherung Datenbank</string>
+    <string name="notiDBSaveOK">Datenbank erfolgreich gesichert</string>
+    <string name="notiKeineBerechtigung">Keine Berechtigung für Ausführung</string>
+    <string name="notiFileError">Fehler beim Zugriff auf Datei</string>
+    <string name="notiSonstige">Unbekannter Fehler aufgetreten</string>
+    <string name="error">Sonstiger Fehler</string>
+
+    <string name="tvGeloescht">Gelöscht</string>
+    <string name="deleteFile">Datei löschen</string>
+    <string name="dailyEvent">Daily Event started…</string>
+    <string name="read_external_storage_denied">Zugrff auf externen Speicher wurde abgelehnt.</string>
+    <string name="executeDBSave">Datanbank jetzt sichern?</string>
+
+
+</resources>

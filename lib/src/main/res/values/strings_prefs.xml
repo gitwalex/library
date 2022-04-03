@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefTitleAllgemein">Informationen und Sicherung</string>
+    <string name="prefDBTitleDatenbank">Datenbank</string>
+    <string name="prefSmryAllgemein">Operationen mit der Datenbank und Infos zur App</string>
+    <string name="prefCompileInfo">Compile Info</string>
+    <string name="prefInfo">Informationen</string>
+    <string name="prefAbout">Über diese App</string>
+    <string name="prefVersion">Version</string>
+    <string name="prefCopyright">Copyright</string>
+    <string name="prefSicherung">Sicherung</string>
+    <string name="prefSummarySavePeriodic">Datenbanksicherung</string>
+    <string name="prefSummarySavePeriodicOn">Nächste Sicherung am %1$s</string>
+    <string name="prefSummarySavePeriodicOff">Keine regelmäßige Sicherung.</string>
+    <string name="prefSaveNow">Jetzt sichern</string>
+    <string name="prefDoSaveNow">Sicherung wird erstellt</string>
+    <string name="prefRestoreDB">Sicherung wiederherstellen</string>
+    <!--Keys der Preferences-->
+    <string name="pkAbout">pkabout</string>
+    <string name="pksave">pksave</string>
+    <string name="pkrestore">pkrestore</string>
+    <string name="pkcopyright">pkcopyright</string>
+    <string name="pkcompile">pkcompile</string>
+    <string name="pkversion">pkversion</string>
+    <string name="showAnzeigeUmsaetzeKompakt">Zeige Details zu den Umsätzen</string>
+    <string name="prefSmryFinanzuebersicht">Ausführung von Tasks (z.B. regelmäßige
+        Buchungen)</string>
+    <!-- Preferences Wertpapieruebersicht -->
+    <!-- Preferences Import -->
+    <!-- Preferences HBCI -->
+    <string name="catTitleRegelmBuchungen">Regelmäßige Buchungen</string>
+    <string name="cbTitleRegelmBuchungenTage">Tage im voraus</string>
+    <string name="catTitlefehlendeCats">Fehlende Kategorien</string>
+    <string name="cbTitleFehlendeCats">Auf unkategorisierte Buchungen hinweisen</string>
+    <string name="cbTitleFehlendeCatsTage">Tage rückwirkend</string>
+    <string name="cbSummryFehlendeCats">Zeigt unkategorieserte Buchungen innerhalb der letzten vorgegebenen Anzahl der Tage . Anzahl 0: Alle unkategorisierten Buchungen zeigen </string>
+    <string name="prefTitelFinanzuebersicht">Meine Finanzen</string>
+    <string name="Einstellungen">Einstellungen</string>
+    <string name="prefSmryPlanung">Einstellung für die Planung als Privatier</string>
+    <string name="prefTitelPlanung">Meine Planung</string>
+    <string name="pkstartJobs">Jobs installieren</string>
+    <string name="prefsetAlarms">Neustart regelmäßige Jobs</string>
+    <string name="prefSonstiges">Allgemeines</string>
+    <string name="jobs">Regelmäßige Jobs installiert</string>
+    <string name="prefjobssumm">%1$d geplante Jobs</string>
+    <string name="pktestDailyJob">Start Daily Job</string>
+    <string name="prefTestJob">Test DailyJob</string>
+    <string name="pkSavePeriodic">pkSavePeriodic</string>
+
+
+</resources>

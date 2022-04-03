@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="colorMode" format="boolean" />
+    <declare-styleable name="CurrencyTextView">
+        <attr name="colorMode" />
+    </declare-styleable>
+    <declare-styleable name="CurrencyEditTextView">
+        <attr name="colorMode" />
+    </declare-styleable>
+    <declare-styleable name="PercentTextView">
+        <attr name="colorMode" />
+    </declare-styleable>
+
+</resources>

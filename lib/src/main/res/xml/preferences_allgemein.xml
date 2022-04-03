@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:text="@string/prefDBTitleDatenbank"
+        android:title="@string/prefDBTitleDatenbank">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="@string/pkSavePeriodic"
+            android:summary="@string/prefSummarySavePeriodic"
+            android:title="@string/prefSicherung" />
+        <Preference
+            android:key="@string/pksave"
+            android:title="@string/prefSaveNow" />
+        <Preference
+            android:key="@string/pkrestore"
+            android:title="@string/prefRestoreDB" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/prefInfo">
+        <Preference
+            android:key="@string/pkAbout"
+            android:title="@string/prefAbout" />
+        <Preference
+            android:key="@string/pkcopyright"
+            android:title="@string/prefCopyright" />
+    </PreferenceCategory>
+</androidx.preference.PreferenceScreen>

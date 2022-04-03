@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TimerTextView">
+        <attr name="countdown" format="integer" />
+    </declare-styleable>
+
+    <style name="Gerwalex.TimerTextViewStyle" parent="Widget.AppCompat.TextView">
+        <item name="android:textStyle">bold</item>
+    </style>
+
+</resources>
