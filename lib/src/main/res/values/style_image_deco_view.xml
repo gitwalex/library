@@ -9,4 +9,7 @@
 
     </declare-styleable>
 
+    <style name="ImageDecoViewStyle">
+
+    </style>
 </resources>
