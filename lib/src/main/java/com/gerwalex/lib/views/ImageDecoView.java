@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -108,41 +109,74 @@ public class ImageDecoView extends FrameLayout {
     }
 
     public void loadImage(@NonNull File file) {
-        RequestCreator request = Picasso.get()
-                                        .load(file);
+        RequestCreator request = Picasso
+                .get()
+                .load(file);
         request.transform(new CropCircleTransformation());
         request.into(imageView);
     }
 
     public void loadImage(@DrawableRes int resourceId) {
-        RequestCreator request = Picasso.get()
-                                        .load(resourceId);
+        RequestCreator request = Picasso
+                .get()
+                .load(resourceId);
         request.transform(new CropCircleTransformation());
         request.into(imageView);
     }
 
     public void loadImage(@NonNull Uri uri) {
-        RequestCreator request = Picasso.get()
-                                        .load(uri);
+        RequestCreator request = Picasso
+                .get()
+                .load(uri);
         request.transform(new CropCircleTransformation());
         request.into(imageView);
+    }
+
+    private int measureDimension(int desiredSize, int measureSpec) {
+        int result;
+        int specMode = MeasureSpec.getMode(measureSpec);
+        int specSize = MeasureSpec.getSize(measureSpec);
+        if (specMode == MeasureSpec.EXACTLY) {
+            result = specSize;
+        } else {
+            result = desiredSize;
+            if (specMode == MeasureSpec.AT_MOST) {
+                result = Math.min(result, specSize);
+            }
+        }
+        if (result < desiredSize) {
+            Log.e("ImageDecoView", "The view is too small, the content might get cut");
+        }
+        return result;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int width = getMeasuredWidth();
+        int height = getMeasuredHeight();
+        int size = Math.min(width, height);
+        setMeasuredDimension(size, size);
     }
 
     public void setBorder(float borderWidth, int borderColor) {
         int bw = (int) borderWidth;
         imageView.setPadding(getPaddingLeft() + bw, getPaddingTop() + bw, getPaddingRight() + bw,
                 getPaddingBottom() + bw);
-        SeriesItem seriesItem = new SeriesItem.Builder(borderColor).setRange(0, 100, 0)
-                                                                   .setLineWidth(bw)
-                                                                   .build();
+        SeriesItem seriesItem = new SeriesItem.Builder(borderColor)
+                .setRange(0, 100, 0)
+                .setLineWidth(bw)
+                .build();
         decoView.addSeries(seriesItem);
-        decoView.addEvent(new DecoEvent.Builder(100).setIndex(0)
-                                                    .setDuration(0)
-                                                    .build());
+        decoView.addEvent(new DecoEvent.Builder(100)
+                .setIndex(0)
+                .setDuration(0)
+                .build());
     }
 
     public void setText(@StringRes int text) {
-        setText(getContext().getString(text));
+        setText(getContext()
+                .getString(text));
     }
 
     public void setText(CharSequence text) {

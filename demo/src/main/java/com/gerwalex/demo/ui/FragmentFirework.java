@@ -32,15 +32,16 @@ public class FragmentFirework extends BasicFragment {
             @Override
             public void onClick(View v) {
                 ParticleSystem ps1 = new ParticleSystem(requireActivity(), 80, R.drawable.confeti2, 10000);
-                ps1.setSpeedModuleAndAngleRange(0f, 0.3f, 0, 360)
-                  .setRotationSpeed(60)
-                  .setAcceleration(0.00005f, 90)
-                  .emit(binding.fireworkBtn, 15);
+                ps1.setSpeedModuleAndAngleRange(0f, 0.3f, 90, 270)
+                   .setRotationSpeed(60)
+                   .setFadeOut(3000)
+                   .setAcceleration(0.00005f, 90)
+                   .emit(binding.fireworkBtn, 15);
                 ParticleSystem ps2 = new ParticleSystem(requireActivity(), 80, R.drawable.confeti3, 10000);
                 ps2.setSpeedModuleAndAngleRange(0f, 0.3f, 0, 360)
-                  .setRotationSpeed(60)
-                  .setAcceleration(0.00005f, 90)
-                  .emit(binding.fireworkBtn, 15);
+                   .setRotationSpeed(60)
+                   .setAcceleration(0.00005f, 90)
+                   .emit(binding.fireworkBtn, 15);
             }
         });
     }

@@ -24,7 +24,7 @@ public class MainActivity extends BasicActivity {
         ViewPager2 viewPager = binding.viewPager;
         viewPager.setAdapter(sectionsPagerAdapter);
         new TabLayoutMediator(binding.tabs, viewPager,
-                (tab, position) -> tab.setText("OBJECT " + (position + 1))).attach();
+                (tab, position) -> tab.setText(sectionsPagerAdapter.getFragmentTitle(position))).attach();
         FloatingActionButton fab = binding.fab;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
