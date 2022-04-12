@@ -71,13 +71,12 @@ abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg 
         super.onActive()
         db.invalidationTracker.addObserver(tracker)
         invalidate(tables)
-        Log.d("gerwalex", "LiveDataBaseTracker registered (Tables: $tables")
     }
 
     override fun onInactive() {
         super.onInactive()
         db.invalidationTracker.removeObserver(tracker)
-        Log.d("gerwalex", "LiveDataBaseTracker unregistered (Tables: $tables")
+        postValue(null)
     }
 }
 
