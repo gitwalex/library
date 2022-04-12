@@ -1,4 +1,4 @@
-package com.raw_app.peanutcounter.lib
+package com.gerwalex.lib.database
 
 import android.database.Cursor
 import android.util.Log

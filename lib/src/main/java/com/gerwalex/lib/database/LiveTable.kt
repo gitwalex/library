@@ -1,4 +1,4 @@
-package com.raw_app.peanutcounter.lib
+package com.gerwalex.lib.database
 
 import android.util.Log
 import androidx.annotation.CallSuper
