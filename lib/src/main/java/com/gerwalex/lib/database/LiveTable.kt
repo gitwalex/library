@@ -13,7 +13,7 @@ import java.util.*
 
 abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg moreTables: String?) :
     MutableLiveData<T>() {
-    val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO)
     protected val tables: MutableSet<String>
     private val tracker: InvalidationTracker.Observer
 
@@ -76,7 +76,6 @@ abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg 
     override fun onInactive() {
         super.onInactive()
         db.invalidationTracker.removeObserver(tracker)
-        postValue(null)
     }
 }
 
