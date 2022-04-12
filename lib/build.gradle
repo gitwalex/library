@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.library'
     id 'maven-publish'
+    id 'org.jetbrains.kotlin.android'
+
 }
 
 android {
@@ -61,6 +63,11 @@ dependencies {
     implementation 'jp.wasabeef:picasso-transformations:2.4.0'
     implementation 'com.nineoldandroids:library:2.4.0'
 
+// kotlin
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
+    implementation 'androidx.core:core-ktx:1.7.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
