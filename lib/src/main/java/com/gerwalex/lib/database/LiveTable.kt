@@ -16,6 +16,8 @@ abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg 
     val scope = CoroutineScope(Dispatchers.IO)
     protected val tables: MutableSet<String>
     private val tracker: InvalidationTracker.Observer
+
+    @JvmField
     val loading = MutableLiveData<Boolean>()
     fun invalidate() {
         invalidate(tables)

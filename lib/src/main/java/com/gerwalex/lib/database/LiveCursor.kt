@@ -9,6 +9,7 @@ abstract class LiveCursor(private val db: RoomDatabase, table: String, vararg mo
     LiveTable<Cursor>
         (db, table, *moreTables) {
 
+
     /**
      * Wenn keine Observer mehr vorhanden sind wird der Cursor ggfs. geschlossen
      */
