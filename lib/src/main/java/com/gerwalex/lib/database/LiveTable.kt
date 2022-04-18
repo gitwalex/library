@@ -44,12 +44,13 @@ abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg 
      * @param tables Namen der geänderten Tabellen.
      */
     protected fun invalidate(tables: Set<String?>?) {
-        loading.postValue(true)
         scope.launch {
+            loading.postValue(true)
             postValue(onInvalidated(tables))
             loading.postValue(false)
         }
     }
+
 
     /**
      * Lädt Daten.

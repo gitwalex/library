@@ -10,6 +10,9 @@
     </declare-styleable>
 
     <style name="ImageDecoViewStyle">
+        <item name="borderColor">@color/defaultBorderColor</item>
 
     </style>
+
+    <color name="defaultBorderColor">@android:color/holo_red_dark</color>
 </resources>
