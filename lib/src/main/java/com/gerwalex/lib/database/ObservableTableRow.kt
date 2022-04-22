@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.database.Cursor
 import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
-import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Ignore
 import com.gerwalex.lib.main.App
 import java.sql.Date
@@ -222,7 +221,7 @@ open class ObservableTableRow : BaseObservable {
         return oldval == value
     }
 
-    fun put(column: String, value: String?): Boolean {
+    fun put(column: String, value: String): Boolean {
         val oldval = getAsString(column)
         currentContent.put(column, value)
         return oldval == value
@@ -234,13 +233,9 @@ open class ObservableTableRow : BaseObservable {
         return oldval == value
     }
 
-    fun put(column: String, date: Date?): Boolean {
+    fun put(column: String, date: Date): Boolean {
         val oldval = getAsDate(column)
-        if (date != null) {
-            currentContent.put(column, MyConverter.toString(date))
-        } else {
-            currentContent.putNull(column)
-        }
+        currentContent.put(column, MyConverter.toString(date))
         return oldval == date
     }
 
@@ -250,12 +245,8 @@ open class ObservableTableRow : BaseObservable {
      * @param column name der Spalte, die eingefuegt werden soll.
      * @param value  BlobWert, der eingefuegt werden soll.
      */
-    fun put(column: String, value: ByteArray?) {
-        if (value != null) {
-            currentContent.put(column, value)
-        } else {
-            currentContent.putNull(column)
-        }
+    fun put(column: String, value: ByteArray) {
+        currentContent.put(column, value)
     }
 
     fun putNull(column: String) {
@@ -273,11 +264,4 @@ open class ObservableTableRow : BaseObservable {
         throw IllegalStateException("Update not implented")
     }
 
-    companion object {
-        @Ignore
-        val NAME = "NAME"
-
-        @Ignore
-        val NOID = RecyclerView.NO_ID
-    }
 }

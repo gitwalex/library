@@ -8,12 +8,16 @@ import androidx.room.InvalidationTracker
 import androidx.room.RoomDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.coroutines.CoroutineContext
 
 abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg moreTables: String?) :
-    MutableLiveData<T>() {
-    private val scope = CoroutineScope(Dispatchers.IO)
+    MutableLiveData<T>(), CoroutineScope {
+    override val coroutineContext: CoroutineContext get() = Dispatchers.IO + job
+    private lateinit var job: Job
+
     protected val tables: MutableSet<String>
     private val tracker: InvalidationTracker.Observer
 
@@ -43,8 +47,8 @@ abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg 
      *
      * @param tables Namen der geänderten Tabellen.
      */
-    protected fun invalidate(tables: Set<String?>?) {
-        scope.launch {
+    protected fun invalidate(tables: Set<String>) {
+        launch {
             loading.postValue(true)
             postValue(onInvalidated(tables))
             loading.postValue(false)
@@ -59,8 +63,8 @@ abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg 
      * aufgerufen wurde.
      * @return T
      */
-    protected abstract fun onInvalidated(tables: Set<String?>?): T
-    override fun observeForever(observer: Observer<in T>) {
+    protected abstract fun onInvalidated(tables: Set<String>): T
+    final override fun observeForever(observer: Observer<in T>) {
         throw IllegalStateException(
             "observeForever() zur Vermeidung von MemoryLeaks nicht möglich. Datenbank erhält Referenz auf " +
                     javaClass.name
@@ -68,15 +72,17 @@ abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg 
     }
 
     @CallSuper
-    override fun onActive() {
+    final override fun onActive() {
         super.onActive()
+        job = Job()
         db.invalidationTracker.addObserver(tracker)
         invalidate(tables)
     }
 
-    override fun onInactive() {
+    final override fun onInactive() {
         super.onInactive()
         db.invalidationTracker.removeObserver(tracker)
+        job.cancel()
     }
 }
 

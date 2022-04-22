@@ -14,7 +14,7 @@ class ActivityResultWrapper<Input, Result> private constructor(
 ) {
     private val launcher: ActivityResultLauncher<Input>
     private fun callOnActivityResult(result: Result) {
-        if (onActivityResult != null) {
+        onActivityResult?.let {
             onActivityResult!!.onActivityResult(result)
         }
     }
