@@ -16,26 +16,23 @@ import kotlin.math.roundToInt
  * Created by K.K. Ho on 3/9/2017.
  */
 object ImageUtils {
-    @JvmStatic
 
+    @JvmStatic
     @Throws(FileNotFoundException::class)
     fun getScaledBitmap(targetLength: Int, sourceImage: File): Bitmap? {
         return getScaledBitmap(targetLength, FileInputStream(sourceImage))
     }
 
     @JvmStatic
-
     fun getScaledBitmap(targetLength: Int, sourceImage: InputStream): Bitmap? {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = false
         val bitmap = BitmapFactory.decodeStream(sourceImage, null, options)
         bitmap?.let { return getScaledBitmap(targetLength, bitmap, options) }
         return null
-
     }
 
     @JvmStatic
-
     fun getScaledBitmap(context: Context, targetLength: Int, @DrawableRes resID: Int): Bitmap {
         val options = BitmapFactory.Options()
         options.inJustDecodeBounds = false

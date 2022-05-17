@@ -7,19 +7,12 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlin.coroutines.CoroutineContext
 
 /**
  * Basis-Activity  mit einem simplen Layout. Stellt ein Bundle args mit den extras aus Intent
  * bereit.
  */
-abstract class BasicActivity : AppCompatActivity(), CoroutineScope {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-    private lateinit var job: Job
+abstract class BasicActivity : AppCompatActivity() {
 
     /**
      * Bundle fuer Argumente. Wird in SaveStateInstance gesichert und in onCreate
@@ -43,14 +36,6 @@ abstract class BasicActivity : AppCompatActivity(), CoroutineScope {
     }
 
     /**
-     * Cancelt eventuell laufende Jobs
-     */
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-    /**
      * Bereitstellen der Argumente aus Intent bzw savedStateInstance in args. Ist in den Args ein
      * String unter "NEXTACTIVIT" vorhanden, wird diese Activity nachgestartet Setzen der View
      *
@@ -59,7 +44,6 @@ abstract class BasicActivity : AppCompatActivity(), CoroutineScope {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        job = Job()
         prefs = PreferenceManager.getDefaultSharedPreferences(this)
         if (savedInstanceState != null) {
             args.putAll(savedInstanceState)
@@ -130,6 +114,7 @@ abstract class BasicActivity : AppCompatActivity(), CoroutineScope {
     }
 
     companion object {
+
         const val ACTIONBARSUBTITLE = "ACTIONBARSUBTITLE"
         const val ACTIONBARTITLE = "ACTIONBARTITLE"
     }

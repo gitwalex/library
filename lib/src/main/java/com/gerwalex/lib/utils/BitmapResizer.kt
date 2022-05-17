@@ -18,6 +18,7 @@ import kotlin.math.min
  * Created by K.K. Ho on 1/9/2017.
  */
 class BitmapResizer(private val context: Context) {
+
     private var compressFormat: CompressFormat
     private var drawableResID = 0
     private var outputDirPath: String
@@ -34,7 +35,6 @@ class BitmapResizer(private val context: Context) {
             .absolutePath
         outputFilename = null
     }
-
 
     @get:Throws(FileNotFoundException::class)
     private val inputFileStream: InputStream?
@@ -84,7 +84,6 @@ class BitmapResizer(private val context: Context) {
                 val outFile = File(outputFilePath)
                 writeBitmapToFile(it, compressFormat, quality, outFile)
                 return outFile
-
             }
             throw java.lang.IllegalArgumentException("Something get wrong...")
         }
@@ -93,7 +92,6 @@ class BitmapResizer(private val context: Context) {
         outputDirPath = dir.absolutePath
         return this
     }
-
 
     /**
      * Set the output file name. If you don't set it, the output file will have the same name as the source file.
@@ -174,5 +172,4 @@ class BitmapResizer(private val context: Context) {
         this.targetLength = max(targetLength, 0)
         return this
     }
-
 }

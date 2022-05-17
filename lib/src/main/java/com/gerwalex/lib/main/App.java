@@ -2,7 +2,6 @@ package com.gerwalex.lib.main;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.res.Resources;
 import android.os.Build;
 import android.os.StrictMode;
 
@@ -27,7 +26,6 @@ public class App extends Application {
     private static final String importDirName = "import";
     public static boolean isTestDevice;
     public static TaskRunner taskRunner = new TaskRunner();
-    private static Resources resources;
 
     public static File getAppBackupDir(Context context) {
         File fileDir = context.getExternalFilesDir(null);
@@ -48,10 +46,6 @@ public class App extends Application {
         File importDir = new File(fileDir, importDirName);
         importDir.mkdirs();
         return importDir;
-    }
-
-    public static Resources getAppResources() {
-        return App.resources;
     }
 
     /**
@@ -76,10 +70,10 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        resources = getResources();
         if (BuildConfig.StrictMode) {
             //            StrictMode.enableDefaults();
-            StrictMode.VmPolicy.Builder vmPolicy = new StrictMode.VmPolicy.Builder().detectLeakedSqlLiteObjects()
+            StrictMode.VmPolicy.Builder vmPolicy = new StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
                     .detectLeakedRegistrationObjects()
                     .detectActivityLeaks();
             vmPolicy.detectLeakedClosableObjects();
@@ -101,7 +95,8 @@ public class App extends Application {
                 vmPolicy.detectIncorrectContextUse();
                 vmPolicy.detectUnsafeIntentLaunch();
             }
-            StrictMode.setVmPolicy(vmPolicy.penaltyLog()
+            StrictMode.setVmPolicy(vmPolicy
+                    .penaltyLog()
                     .build());
             final Thread.UncaughtExceptionHandler oldHandler = Thread.getDefaultUncaughtExceptionHandler();
             Thread.setDefaultUncaughtExceptionHandler((paramThread, paramThrowable) -> {

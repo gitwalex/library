@@ -11,6 +11,7 @@ import java.util.*
  * Created by K.K. Ho on 3/9/2017.
  */
 object FileUtils {
+
     @JvmStatic
     fun getOutputFilePath(
         compressFormat: CompressFormat, outputDirPath: String,

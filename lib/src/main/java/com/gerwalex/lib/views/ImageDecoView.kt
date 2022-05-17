@@ -27,6 +27,7 @@ class ImageDecoView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0,
 ) : FrameLayout(context, attrs, defStyle) {
+
     val imageView = ImageView(context, attrs)
     val decoView = DecoView(context, attrs)
     val textView = TextView(context, attrs)
@@ -152,5 +153,4 @@ class ImageDecoView @JvmOverloads constructor(
     fun setTextStyle(tf: Typeface?) {
         textView.typeface = tf
     }
-
 }

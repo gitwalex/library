@@ -15,16 +15,6 @@ public abstract class DBDao {
     }
 
     @Transaction
-    public void runInTransaction(Runnable r) {
-        try {
-            r.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Transaction canceled", e.getCause());
-        }
-    }
-
-    @Transaction
     public Long runInTransaction(Callable<Long> c) {
         try {
             return c.call();

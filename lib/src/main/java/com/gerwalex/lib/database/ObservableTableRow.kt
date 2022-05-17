@@ -5,12 +5,24 @@ import android.database.Cursor
 import androidx.annotation.CallSuper
 import androidx.databinding.BaseObservable
 import androidx.room.Ignore
-import com.gerwalex.lib.main.App
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import java.sql.Date
 import java.util.*
+import kotlin.coroutines.CoroutineContext
+import kotlin.reflect.KMutableProperty0
+import kotlin.reflect.KProperty
 
-open class ObservableTableRow : BaseObservable {
+open class ObservableTableRow : BaseObservable, CoroutineScope {
 
+    override val coroutineContext: CoroutineContext get() = Dispatchers.IO + job
+
+    @Ignore
+    private var job = Job()
+    /**
+     * Abbild der jeweiligen Zeile der Datenbank. Werden nicht direkt geaendert.
+     */
     /**
      * Abbild der jeweiligen Zeile der Datenbank. Werden nicht direkt geaendert.
      */
@@ -19,13 +31,20 @@ open class ObservableTableRow : BaseObservable {
 
     @Ignore
     var isInserted = false
-
+    /**
+     * @return Liefert eine Kopie der akteullen  Werte zurueck.
+     */
     /**
      * @return Liefert eine Kopie der akteullen  Werte zurueck.
      */
     val content: ContentValues
         get() = ContentValues(currentContent)
 
+    @Ignore
+    val contentMap = HashMap<String, Any?>()
+    /**
+     * Konstruktor mit Cursor.
+     */
     /**
      * Konstruktor mit Cursor.
      */
@@ -48,8 +67,30 @@ open class ObservableTableRow : BaseObservable {
         return currentContent.containsKey(column)
     }
 
-    open suspend fun delete() {
-        throw IllegalStateException("Delete not implented")
+    fun setValue(property: KProperty<*>, value: Any) {
+        when (value) {
+            is Long -> put(property.name, value)
+            is String -> put(property.name, value)
+            is Int -> put(property.name, value)
+            is Date -> put(property.name, value)
+            is Boolean -> put(property.name, value)
+            is Float -> put(property.name, value)
+            is ByteArray -> put(property.name, value)
+        }
+        throw IllegalArgumentException("${property.name} must be one of Long...")
+    }
+
+    fun getValue(property: KProperty<*>, value: Any): Any? {
+        when (value) {
+            is Long -> return getAsLong(property.name)
+            is String -> return getAsString(property.name)
+            is Int -> return getAsInt(property.name)
+            is Date -> return getAsDate(property.name)
+            is Boolean -> return getAsBoolean(property.name)
+            is Float -> return getAsFloat(property.name)
+            is ByteArray -> return getAsByteArray(property.name)
+        }
+        throw IllegalArgumentException("${property.name} must be one of Long...")
     }
 
     /**
@@ -83,8 +124,7 @@ open class ObservableTableRow : BaseObservable {
         require(!(c.isBeforeFirst && !c.moveToFirst())) { "Cursor ist leer!" }
         for (i in 0 until c.columnCount) {
             val colName = c.getColumnName(i)
-            val type = c.getType(i)
-            when (type) {
+            when (c.getType(i)) {
                 Cursor.FIELD_TYPE_BLOB ->
                     currentContent.put(colName, c.getBlob(i))
                 Cursor.FIELD_TYPE_FLOAT -> currentContent.put(colName, c.getFloat(i))
@@ -101,11 +141,27 @@ open class ObservableTableRow : BaseObservable {
         }
     }
 
+    fun getAsLong(column: KMutableProperty0<Long>): Long {
+        return getAsLong(column.name)
+    }
+
+    fun getAsString(column: KMutableProperty0<String?>): String? {
+        return getAsString(column.name)
+    }
+
+    fun getAsDate(column: KMutableProperty0<Date>): Date? {
+        return getAsDate(column.name)
+    }
+
+    fun getAsInt(column: KMutableProperty0<Int>): Int {
+        return getAsInt(column.name)
+    }
+
     /**
      * Liefert den Wert aus dem Geschaeftsobjekt zu Spalte  als Boolean.
      *
      * @param column Spalte
-     * @return Den aktuellen Wert der Spalte (true ooder false)
+     * @return Den aktuellen Wert der Spalte (true oder false)
      */
     fun getAsBoolean(column: String): Boolean {
         return getAsInt(column) != 0
@@ -121,7 +177,7 @@ open class ObservableTableRow : BaseObservable {
      * @param column name der Spalte
      * @return Date-Objekt oder null
      */
-    fun getAsDate(column: String): Date {
+    fun getAsDate(column: String): Date? {
         return MyConverter.toDate(getAsString(column))
     }
 
@@ -129,8 +185,13 @@ open class ObservableTableRow : BaseObservable {
         return currentContent.getAsDouble(column)
     }
 
+    fun getAsDouble(column: String, defaultValue: Double): Double {
+        val value = currentContent.getAsDouble(column)
+        return value ?: defaultValue
+    }
+
     /**
-     * Liefert den aktuellsten Wert aus dem Geschaeftsobjekt zu Spalte  als Long.
+     * Liefert den aktuellsten Wert aus dem Geschaeftsobjekt zu Spalte  als Float.
      *
      * @param column name der Spalte
      * @return Den aktuellen Wert der Spalte oder null, wenn nicht vorhanden
@@ -143,12 +204,18 @@ open class ObservableTableRow : BaseObservable {
      * Liefert den aktuellsten Wert aus dem Geschaeftsobjekt zu Spalte als Integer.
      *
      * @param column name der Spalte
-     * @return Den aktuellen Wert der Spalte oder null, wenn nicht vorhanden
+     * @return Den aktuellen Wert der Spalte oder 0, wenn nicht vorhanden
      */
     fun getAsInt(column: String): Int {
         return if (isNull(column)) 0 else currentContent.getAsInteger(column)
     }
 
+    /**
+     * Liefert den aktuellsten Wert aus dem Geschaeftsobjekt zu Spalte als Long.
+     *
+     * @param column name der Spalte
+     * @return Den aktuellen Wert der Spalte oder 0, wenn nicht vorhanden
+     */
     fun getAsLong(column: String): Long {
         return if (isNull(column)) 0 else currentContent.getAsLong(column)
     }
@@ -175,10 +242,6 @@ open class ObservableTableRow : BaseObservable {
 
     override fun hashCode(): Int {
         return Objects.hash(currentContent)
-    }
-
-    open suspend fun insert(): Long {
-        throw IllegalStateException("Insert not implented")
     }
 
     /**
@@ -257,11 +320,11 @@ open class ObservableTableRow : BaseObservable {
      * @see Object.toString
      */
     override fun toString(): String {
-        return javaClass.simpleName + "Werte: " + currentContent + App.linefeed
+        return javaClass.simpleName + "Werte: " + currentContent
     }
 
-    open suspend fun update() {
-        throw IllegalStateException("Update not implented")
-    }
+    companion object {
 
+        const val NOID = -1L
+    }
 }

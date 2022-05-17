@@ -12,6 +12,7 @@ class ActivityResultWrapper<Input, Result> private constructor(
     contract: ActivityResultContract<Input, Result>,
     private var onActivityResult: OnActivityResult<Result>?,
 ) {
+
     private val launcher: ActivityResultLauncher<Input>
     private fun callOnActivityResult(result: Result) {
         onActivityResult?.let {
@@ -41,6 +42,7 @@ class ActivityResultWrapper<Input, Result> private constructor(
      * Callback interface
      */
     interface OnActivityResult<O> {
+
         /**
          * Called after receiving a result from the target activity
          */
@@ -48,6 +50,7 @@ class ActivityResultWrapper<Input, Result> private constructor(
     }
 
     companion object {
+
         /**
          * Specialised method for launching new activities.
          */

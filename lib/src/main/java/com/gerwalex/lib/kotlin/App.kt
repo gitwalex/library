@@ -17,6 +17,7 @@ import java.util.concurrent.Future
 import kotlin.system.exitProcess
 
 class App : Application() {
+
     override fun onCreate() {
         super.onCreate()
         appResources = resources
@@ -72,6 +73,7 @@ class App : Application() {
     }
 
     companion object {
+
         const val ABOUTHTML = "no_about.html"
         const val COPYRIGHT = "no_copyright.html"
         val linefeed: String = System.getProperty("line.separator") as String

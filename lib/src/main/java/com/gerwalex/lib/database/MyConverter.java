@@ -18,7 +18,7 @@ import java.util.Locale;
 
 public class MyConverter {
     @Ignore
-    public static final double NACHKOMMA = 1000000.0;
+    public static final long NACHKOMMA = 1000000L;
     @SuppressLint("ConstantLocale")
     private static final DecimalFormat cf = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.getDefault());
     private static final DateFormat di = DateFormat.getDateInstance(DateFormat.DEFAULT);

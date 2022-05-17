@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.Observable
+import androidx.databinding.PropertyChangeRegistry
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.gerwalex.lib.R
@@ -15,32 +17,59 @@ import com.gerwalex.lib.databinding.RateDailogBinding
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.google.android.play.core.tasks.Task
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import java.sql.Date
-import kotlin.coroutines.CoroutineContext
 
 /**
- * Fragment, welches die RawAppAction aus args liest und belegt.
+ * Fragment, welches die RawAppAction aus args liest und belegt. Properties sind Observable (und Bindable)
  */
-abstract class BasicFragment : Fragment(), CoroutineScope {
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main + job
-    private lateinit var job: Job
+abstract class BasicFragment : Fragment(), Observable {
+
+    private val mCallbacks by lazy { PropertyChangeRegistry() }
+    override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback) {
+        synchronized(this) {
+            mCallbacks.add(callback)
+        }
+    }
+
+    override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback) {
+        synchronized(this) {
+            mCallbacks.remove(callback)
+        }
+        /**
+         * Notifies listeners that all properties of this instance have changed.
+         */
+    }
+
+    fun notifyChange() {
+        synchronized(this) {
+            mCallbacks.notifyCallbacks(this, 0, null)
+        }
+        /**
+         * Notifies listeners that a specific property has changed. The getter for the property
+         * that changes should be marked with [Bindable] to generate a field in
+         * `BR` to be used as `fieldId`.
+         *
+         * @param fieldId The generated BR id for the Bindable field.
+         */
+    }
+
+    fun notifyPropertyChanged(fieldId: Int) {
+        synchronized(this) {
+            mCallbacks.notifyCallbacks(this, fieldId, null)
+        }
+    }
 
     val backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             onBackPressed()
         }
     }
-    protected lateinit var prefs: SharedPreferences
+    protected val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
 
     /**
      * Bundle fuer ein Fragment. Wird in onCreate() wiederhergestellt und in OnSaveStateInstance()
      * gesichert.
      */
-    @JvmField
     protected val args = Bundle()
 
     /**
@@ -110,9 +139,9 @@ abstract class BasicFragment : Fragment(), CoroutineScope {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        arguments?.apply { args.putAll(arguments) }
 
+
+        arguments?.apply { args.putAll(arguments) }
     }
 
     /**
@@ -121,21 +150,11 @@ abstract class BasicFragment : Fragment(), CoroutineScope {
     fun onBackPressed() {}
 
     /**
-     * Cancelt eventuell laufende Jobs
-     */
-    override fun onDestroy() {
-        super.onDestroy()
-        job.cancel()
-    }
-
-
-    /**
      * Setzen der durch setArguments(args) erhaltenen bzw. Ruecksichern der Argumente im Bundle
      * args. Gibt es keine MainAction unter AWLIBACTION, wird MainAction.SHOW verwendet.
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        job = Job()
         if (savedInstanceState != null) {
             args.putAll(savedInstanceState)
         }
@@ -155,8 +174,8 @@ abstract class BasicFragment : Fragment(), CoroutineScope {
         }
     }
 
-    protected fun onRatingPostponed() {}
-    protected fun onRatingRejected() {}
+    protected open fun onRatingPostponed() {}
+    protected open fun onRatingRejected() {}
 
     /**
      * Ist die Klasse eine Instanz von OnSharedPreferenceChangeListener, wird diese als [ ][SharedPreferences.registerOnSharedPreferenceChangeListener] registriert.
@@ -242,10 +261,10 @@ abstract class BasicFragment : Fragment(), CoroutineScope {
     }
 
     companion object {
+
         private const val NOLAYOUT = 0
         private const val RATINGACCOMPLISHED = "RATINGACCOMPLISHED"
         private const val RATINGREJECTED = "RATINGREJECTED"
-
         /**
          * SharedPreferences werden allen abgeleiteten Fragmenten bereitgestellt
          */
