@@ -48,9 +48,9 @@ public class FragmentImageDecoView extends BasicFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        placeholder = args.getInt(PLACEHOLDER, com.gerwalex.lib.R.drawable.img);
-        borderColor = args.getInt(ARCCOLOR, getDefaultArcColor(requireContext()));
-        borderWidth = args.getFloat(LINEWIDTH, 30f);
+        placeholder = requireArguments().getInt(PLACEHOLDER, com.gerwalex.lib.R.drawable.img);
+        borderColor = requireArguments().getInt(ARCCOLOR, getDefaultArcColor(requireContext()));
+        borderWidth = requireArguments().getFloat(LINEWIDTH, 30f);
     }
 
     @CallSuper
@@ -65,15 +65,16 @@ public class FragmentImageDecoView extends BasicFragment {
         super.onInflate(context, attrs, savedInstanceState);
         TypedArray a = context.obtainStyledAttributes(attrs, com.gerwalex.lib.R.styleable.ImageDecoView);
         try {
-            borderColor = a.getColor(com.gerwalex.lib.R.styleable.ImageDecoView_borderColor, getDefaultArcColor(context));
+            borderColor =
+                    a.getColor(com.gerwalex.lib.R.styleable.ImageDecoView_borderColor, getDefaultArcColor(context));
             placeholder = a.getResourceId(com.gerwalex.lib.R.styleable.ImageDecoView_placeholder, 0);
             borderWidth = a.getDimension(com.gerwalex.lib.R.styleable.ImageDecoView_borderWidth, 30f);
         } finally {
             a.recycle();
         }
-        args.putInt(PLACEHOLDER, placeholder);
-        args.putInt(ARCCOLOR, borderColor);
-        args.putFloat(LINEWIDTH, borderWidth);
+        requireArguments().putInt(PLACEHOLDER, placeholder);
+        requireArguments().putInt(ARCCOLOR, borderColor);
+        requireArguments().putFloat(LINEWIDTH, borderWidth);
     }
     
 }

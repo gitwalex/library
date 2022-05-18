@@ -70,7 +70,7 @@ abstract class BasicFragment : Fragment(), Observable {
      * Bundle fuer ein Fragment. Wird in onCreate() wiederhergestellt und in OnSaveStateInstance()
      * gesichert.
      */
-    protected val args = Bundle()
+    val args = Bundle()
 
     /**
      * Layout des Fragments

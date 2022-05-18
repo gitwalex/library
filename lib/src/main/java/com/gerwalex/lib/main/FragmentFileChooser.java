@@ -32,7 +32,6 @@ import com.google.android.material.snackbar.Snackbar;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * FileChooser fuer Dateien. Ermittelt vor Anzeige die Berechtigung, wenn erforderlich.
@@ -100,7 +99,7 @@ public class FragmentFileChooser extends BasicFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mDirectoy = new File(Objects.requireNonNull(args.getString(FILEDIRECTORY)));
+        mDirectoy = new File(requireArguments().getString(FILEDIRECTORY));
         if (!mDirectoy.isDirectory()) {
             throw new IllegalArgumentException("File must be Directory");
         }
