@@ -8,6 +8,8 @@ import androidx.room.Ignore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import java.math.BigDecimal
+import java.math.RoundingMode
 import java.sql.Date
 import java.util.*
 import kotlin.coroutines.CoroutineContext
@@ -181,6 +183,18 @@ open class ObservableTableRow : BaseObservable, CoroutineScope {
         return MyConverter.toDate(getAsString(column))
     }
 
+    fun getAsBigDecimal(column: String): BigDecimal {
+        return BigDecimal(getAsString(column))
+    }
+
+    fun getAsCurrency(column: String): BigDecimal {
+        val value = BigDecimal(getAsString(column))
+        value.setScale(Currency
+            .getInstance(Locale.getDefault())
+            .defaultFractionDigits, RoundingMode.HALF_UP)
+        return value
+    }
+
     fun getAsDouble(column: String): Double {
         return currentContent.getAsDouble(column)
     }
@@ -300,6 +314,12 @@ open class ObservableTableRow : BaseObservable, CoroutineScope {
         val oldval = getAsDate(column)
         currentContent.put(column, MyConverter.toString(date))
         return oldval == date
+    }
+
+    fun put(column: String, value: BigDecimal): Boolean {
+        val oldval = getAsBigDecimal(column)
+        currentContent.put(column, value.toString())
+        return oldval == value
     }
 
     /**

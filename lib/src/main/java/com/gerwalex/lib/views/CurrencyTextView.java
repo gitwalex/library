@@ -16,6 +16,7 @@ import androidx.databinding.InverseBindingListener;
 import com.gerwalex.lib.R;
 import com.gerwalex.lib.database.MyConverter;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 /**
@@ -26,7 +27,12 @@ public class CurrencyTextView extends AppCompatTextView {
     private boolean colorMode;
     private int defaultColor;
     private InverseBindingListener mBindingListener;
-    private Long value;
+    private BigDecimal value = new BigDecimal(0);
+
+    @InverseBindingAdapter(attribute = "value")
+    public static BigDecimal getBigDecimal(CurrencyTextView view) {
+        return view.getBigDecimal();
+    }
 
     @InverseBindingAdapter(attribute = "value")
     public static long getValue(CurrencyTextView view) {
@@ -34,9 +40,15 @@ public class CurrencyTextView extends AppCompatTextView {
     }
 
     @BindingAdapter(value = {"value", "valueAttrChanged"}, requireAll = false)
+    public static void setBigDecimal(CurrencyTextView view, BigDecimal value, InverseBindingListener listener) {
+        view.mBindingListener = listener;
+        view.setBigDecimal(value);
+    }
+
+    @BindingAdapter(value = {"value", "valueAttrChanged"}, requireAll = false)
     public static void setValue(CurrencyTextView view, long value, InverseBindingListener listener) {
         view.mBindingListener = listener;
-        view.setValue(value);
+        view.setValue(new BigDecimal(value));
     }
 
     public CurrencyTextView(Context context) {
@@ -54,8 +66,16 @@ public class CurrencyTextView extends AppCompatTextView {
         init(context, attrs);
     }
 
-    public long getValue() {
+    public BigDecimal getBigDecimal() {
         return value;
+    }
+
+    public void setBigDecimal(BigDecimal value) {
+        this.value = value;
+    }
+
+    public long getValue() {
+        return value.longValue();
     }
 
     /**
@@ -66,13 +86,13 @@ public class CurrencyTextView extends AppCompatTextView {
      */
     @CallSuper
     @MainThread
-    public void setValue(long amount) {
+    public void setValue(BigDecimal amount) {
         if (!Objects.equals(value, amount)) {
             value = amount;
             if (mBindingListener != null) {
                 mBindingListener.onChange();
             }
-            if (colorMode & value < 0) {
+            if (colorMode & value.compareTo(BigDecimal.ZERO) < 0) {
                 setTextColor(Color.RED);
             } else {
                 setTextColor(defaultColor);
@@ -81,10 +101,14 @@ public class CurrencyTextView extends AppCompatTextView {
         }
     }
 
+    public void setValue(long amount) {
+        setValue(new BigDecimal(amount));
+    }
+
     private void init(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CurrencyTextView);
         if (isInEditMode()) {
-            value = 123_456_789L;
+            value = new BigDecimal(123_456_789L);
         }
         colorMode = a.getBoolean(R.styleable.CurrencyTextView_colorMode, true);
         a.recycle();
@@ -97,6 +121,6 @@ public class CurrencyTextView extends AppCompatTextView {
     }
 
     public void postValue(long value) {
-        post(() -> setValue(value));
+        post(() -> setValue(new BigDecimal(value)));
     }
 }

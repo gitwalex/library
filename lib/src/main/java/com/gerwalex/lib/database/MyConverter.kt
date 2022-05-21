@@ -1,42 +1,44 @@
-package com.gerwalex.lib.database;
+package com.gerwalex.lib.database
 
-import android.annotation.SuppressLint;
+import android.annotation.SuppressLint
+import androidx.room.Ignore
+import androidx.room.TypeConverter
+import com.google.android.material.slider.LabelFormatter
+import java.math.BigDecimal
+import java.sql.Date
+import java.text.DateFormat
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.util.*
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.room.Ignore;
-import androidx.room.TypeConverter;
+object MyConverter {
 
-import com.google.android.material.slider.LabelFormatter;
-
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.Locale;
-
-public class MyConverter {
     @Ignore
-    public static final long NACHKOMMA = 1000000L;
+    val NACHKOMMA = 1000000L
+
     @SuppressLint("ConstantLocale")
-    private static final DecimalFormat cf = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.getDefault());
-    private static final DateFormat di = DateFormat.getDateInstance(DateFormat.DEFAULT);
+    private val cf = NumberFormat.getCurrencyInstance(Locale.getDefault()) as DecimalFormat
+    private val di = DateFormat.getDateInstance(DateFormat.DEFAULT)
+
     @SuppressLint("ConstantLocale")
-    private static final double units =
-            Math.pow(10, Currency.getInstance(Locale.getDefault()).getDefaultFractionDigits());
-    public static LabelFormatter currencyLabelFormatter = MyConverter::convertCurrency;
-    public static LabelFormatter percentLabelFormatter = MyConverter::convertPercent;
+    private val units = Math.pow(10.0, Currency
+        .getInstance(Locale.getDefault())
+        .defaultFractionDigits.toDouble())
+    var currencyLabelFormatter = LabelFormatter { obj: Float -> convertCurrency(obj) }
+    var percentLabelFormatter = LabelFormatter { obj: Float -> convertPercent(obj.toDouble()) }
 
     /**
      * Liefert den letzten Teil des Catnamen
      */
-    public static String convertCatname(String longcatname) {
+    @JvmStatic
+    fun convertCatname(longcatname: String?): String? {
         if (longcatname != null) {
-            String[] value = longcatname.split(":");
-            return value[value.length - 1];
+            val value = longcatname
+                .split(":")
+                .toTypedArray()
+            return value[value.size - 1]
         }
-        return null;
+        return null
     }
 
     /**
@@ -45,10 +47,10 @@ public class MyConverter {
      * @param amount Betrag
      * @return Anzeigeformat
      */
-    @NonNull
+    @JvmStatic
     @TypeConverter
-    public static String convertCurrency(float amount) {
-        return cf.format(amount / units);
+    fun convertCurrency(amount: Float): String {
+        return cf.format(amount / units)
     }
 
     /**
@@ -57,22 +59,40 @@ public class MyConverter {
      * @param amount Betrag
      * @return Anzeigeformat
      */
+    @JvmStatic
     @TypeConverter
-    public static String convertCurrency(Long amount) {
-        return amount != null ? cf.format(amount / units) : null;
+    fun convertCurrency(amount: Long?): String? {
+        return if (amount != null) NumberFormat
+            .getCurrencyInstance()
+            .format(amount) else null
+    }
+
+    /**
+     * Convertiert einen Geldbetrag in das Anzeigeformat der Anzeigewährung
+     *
+     * @param amount Betrag
+     * @return Anzeigeformat
+     */
+    @JvmStatic
+    @TypeConverter
+    fun convertCurrency(amount: BigDecimal?): String? {
+        return if (amount != null) NumberFormat
+            .getCurrencyInstance()
+            .format(amount) else null
     }
 
     /**
      * Convertiert ein Date
      */
-    public static String convertDate(@Nullable Date date) {
-        return date == null ? null : di.format(date);
+    @JvmStatic
+    fun convertDate(date: Date?): String? {
+        return if (date == null) null else di.format(date)
     }
 
-    @NonNull
+    @JvmStatic
     @SuppressLint("DefaultLocale")
-    public static String convertPercent(double value) {
-        return String.format("%.2f%%", value * 100);
+    fun convertPercent(value: Double): String {
+        return String.format("%.2f%%", value * 100)
     }
 
     /**
@@ -82,40 +102,44 @@ public class MyConverter {
      * @param nachkommastellen Anzahl der Nachkommastellen, z.B. bei Euro = 2
      * @return value als Long. Konvertierung wie folgt:
      */
-    public static long convertToLong(String value, int nachkommastellen) {
+    @JvmStatic
+    fun convertToLong(value: String?, nachkommastellen: Int): Long {
         if (value != null) {
-            String[] split = value.split("\\.");
-            if (split.length > 2) {
-                throw new NumberFormatException(
-                        value + " kann nicht konvertiert " + "werden. Mehr als ein Dezimalpunkt");
+            val split = value
+                .split("\\.")
+                .toTypedArray()
+            if (split.size > 2) {
+                throw NumberFormatException("$value kann nicht konvertiert werden. Mehr als ein Dezimalpunkt")
             }
-            long val = (long) (Long.parseLong(split[0]) * Math.pow(10, nachkommastellen));
-            if (split.length == 2) {
-                String nk = (split[1] + "0000000000000").substring(0, nachkommastellen);
-                if (val < 0) {
-                    val -= Long.parseLong(nk);
+            var `val` = (split[0].toLong() * Math.pow(10.0, nachkommastellen.toDouble())).toLong()
+            if (split.size == 2) {
+                val nk = (split[1] + "0000000000000").substring(0, nachkommastellen)
+                if (`val` < 0) {
+                    `val` -= nk.toLong()
                 } else {
-                    val += Long.parseLong(nk);
+                    `val` += nk.toLong()
                 }
             }
-            return val;
+            return `val`
         }
-        return 0;
+        return 0
     }
 
     /**
      * Konvertiert Datum im Format 'yyyy-MM-dd' in ein Date
      */
+    @JvmStatic
     @TypeConverter
-    public static Date toDate(String date) {
-        return date == null ? null : Date.valueOf(date);
+    fun toDate(date: String?): Date? {
+        return if (date == null) null else Date.valueOf(date)
     }
 
     /**
      * Konvertiert Date in einen String im Format 'yyyy-MM-dd'
      */
+    @JvmStatic
     @TypeConverter
-    public static String toString(Date date) {
-        return date == null ? null : date.toString();
+    fun toString(date: Date?): String? {
+        return date?.toString()
     }
 }
