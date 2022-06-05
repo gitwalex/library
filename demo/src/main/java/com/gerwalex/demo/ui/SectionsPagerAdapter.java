@@ -10,9 +10,9 @@ import androidx.fragment.app.FragmentActivity;
  */
 public class SectionsPagerAdapter extends androidx.viewpager2.adapter.FragmentStateAdapter {
 
-    private static final int ITEM_COUNT = 3;
+    private static final int ITEM_COUNT = 4;
 
-    private static final String[] TAB_TITLES = new String[]{"ImageDecoView", "Firework", "Konfetti"};
+    private static final String[] TAB_TITLES = new String[]{"ImageDecoView", "Firework", "Konfetti", "Permission-Demo"};
 
     public SectionsPagerAdapter(FragmentActivity f) {
         super(f);
@@ -32,6 +32,9 @@ public class SectionsPagerAdapter extends androidx.viewpager2.adapter.FragmentSt
                 break;
             case 2:
                 f = new FragmentKonfetti();
+                break;
+            case 3:
+                f = new FragmentPermission();
                 break;
             default:
                 throw new IllegalStateException("Fragment für Position nicht bekannt");

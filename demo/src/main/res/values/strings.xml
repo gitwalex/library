@@ -3,4 +3,10 @@
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="firework">Feuerwerk</string>
+    <string name="request_camera_permission">Camera-Permission</string>
+    <string name="request_storage_permission">Strorage-Permission</string>
+    <string name="permission_granted">Berechtigung erteilt</string>
+    <string name="permission_denied">Berechtigung abgelehnt</string>
+    <string name="permission_permamently_denied">Berechtigung permament abgelehnt</string>
+
 </resources>
