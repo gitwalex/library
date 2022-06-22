@@ -1,12 +1,10 @@
 package com.gerwalex.lib.main
 
 import android.app.AlertDialog
-import android.content.Context
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.Observable
 import androidx.databinding.PropertyChangeRegistry
@@ -59,11 +57,6 @@ abstract class BasicFragment : Fragment(), Observable {
         }
     }
 
-    val backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            onBackPressed()
-        }
-    }
     protected val prefs: SharedPreferences by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
 
     /**
@@ -86,16 +79,6 @@ abstract class BasicFragment : Fragment(), Observable {
      * Gemerkter ActionBarSubTitle. Wird in onPause() wiederhergestellt.
      */
     private var mSavedActionBarSubtitle: CharSequence? = null
-
-    /**
-     * Callback für Zurück-Button aktivieren. Wenn das Callback nicht mehr benötigt wird, @{link
-     * RawAppFragment#removeOnBackPressedCallback aufrufen}
-     */
-    protected fun addOnBackPressedCallback() {
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
-        backPressedCallback.isEnabled = true
-    }
-
     fun askForRating(appname: String) {
         val rejected = prefs.getBoolean(RATINGREJECTED, false)
         val accomplished = prefs.getString(RATINGACCOMPLISHED, null)
@@ -137,18 +120,6 @@ abstract class BasicFragment : Fragment(), Observable {
         }
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-
-        arguments?.apply { args.putAll(arguments) }
-    }
-
-    /**
-     * Wird immer gerufen, bevor in Activity backPressed ausgeführt wird.
-     */
-    fun onBackPressed() {}
-
     /**
      * Setzen der durch setArguments(args) erhaltenen bzw. Ruecksichern der Argumente im Bundle
      * args. Gibt es keine MainAction unter AWLIBACTION, wird MainAction.SHOW verwendet.
@@ -167,7 +138,7 @@ abstract class BasicFragment : Fragment(), Observable {
     override fun onPause() {
         super.onPause()
         if (this is OnSharedPreferenceChangeListener) {
-            prefs.unregisterOnSharedPreferenceChangeListener(this as OnSharedPreferenceChangeListener)
+            prefs.unregisterOnSharedPreferenceChangeListener(this)
         }
         if (isSavedActionBarSubtitle) {
             setSubTitle(mSavedActionBarSubtitle)
@@ -185,10 +156,12 @@ abstract class BasicFragment : Fragment(), Observable {
         if (this is OnSharedPreferenceChangeListener) {
             prefs.registerOnSharedPreferenceChangeListener(this as OnSharedPreferenceChangeListener)
         }
-        val title = args.getString(BasicActivity.ACTIONBARTITLE)
-        title?.let { setTitle(it) }
-        val subTitle = args.getString(BasicActivity.ACTIONBARSUBTITLE)
-        subTitle?.let { setSubTitle(it) }
+        args
+            .getString(BasicActivity.ACTIONBARTITLE)
+            ?.let { setTitle(it) }
+        args
+            .getString(BasicActivity.ACTIONBARSUBTITLE)
+            ?.let { setSubTitle(it) }
     }
 
     /**
@@ -199,18 +172,6 @@ abstract class BasicFragment : Fragment(), Observable {
         super.onSaveInstanceState(outState)
     }
 
-    override fun onStart() {
-        super.onStart()
-        val title = args.getString(BasicActivity.ACTIONBARTITLE)
-        title?.let { setTitle(it) }
-        val subTitle = args.getString(BasicActivity.ACTIONBARSUBTITLE)
-        subTitle?.let { setSubTitle(it) }
-    }
-
-    protected fun removeOnBackPressedCallback() {
-        backPressedCallback.isEnabled = false
-    }
-
     /**
      * Setzt den SubTitle in der SupportActionBar. Rettet vorher den aktuellen Subtitle, der wird
      * dann in onPause() wiederhergestellt.
@@ -218,13 +179,12 @@ abstract class BasicFragment : Fragment(), Observable {
      * @param subTitle Text des Subtitles
      */
     fun setSubTitle(subTitle: CharSequence?) {
-        val bar = (activity as AppCompatActivity?)!!.supportActionBar
-        if (bar != null) {
+        (requireActivity() as AppCompatActivity).supportActionBar?.let {
             if (!isSavedActionBarSubtitle) {
-                mSavedActionBarSubtitle = bar.subtitle
+                mSavedActionBarSubtitle = it.subtitle
                 isSavedActionBarSubtitle = true
             }
-            bar.subtitle = subTitle
+            it.subtitle = subTitle
         }
         args.putCharSequence(BasicActivity.ACTIONBARSUBTITLE, subTitle)
     }
@@ -244,20 +204,19 @@ abstract class BasicFragment : Fragment(), Observable {
      * @param title Text des STitles
      */
     fun setTitle(title: CharSequence?) {
-        val bar = (activity as AppCompatActivity?)!!.supportActionBar
-        if (bar != null) {
-            bar.title = title
+        (requireActivity() as AppCompatActivity).supportActionBar?.let {
+            it.title = title
+            args.putCharSequence(BasicActivity.ACTIONBARTITLE, title)
         }
-        args.putCharSequence(BasicActivity.ACTIONBARTITLE, title)
-    }
 
-    /**
-     * Setzt den Title in der SupportActionBar
-     *
-     * @param titleResID resID des Titles
-     */
-    fun setTitle(titleResID: Int) {
-        setTitle(getString(titleResID))
+        /**
+         * Setzt den Title in der SupportActionBar
+         *
+         * @param titleResID resID des Titles
+         */
+        fun setTitle(titleResID: Int) {
+            setTitle(getString(titleResID))
+        }
     }
 
     companion object {
@@ -265,8 +224,5 @@ abstract class BasicFragment : Fragment(), Observable {
         private const val NOLAYOUT = 0
         private const val RATINGACCOMPLISHED = "RATINGACCOMPLISHED"
         private const val RATINGREJECTED = "RATINGREJECTED"
-        /**
-         * SharedPreferences werden allen abgeleiteten Fragmenten bereitgestellt
-         */
     }
 }

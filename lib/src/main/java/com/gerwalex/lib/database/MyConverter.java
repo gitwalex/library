@@ -50,9 +50,7 @@ public class MyConverter {
     @NonNull
     @TypeConverter
     public static String convertCurrency(float amount) {
-        return NumberFormat
-                .getCurrencyInstance()
-                .format(amount / units);
+        return cf.format(amount / units);
     }
 
     /**
@@ -63,6 +61,17 @@ public class MyConverter {
      */
     @TypeConverter
     public static String convertCurrency(Long amount) {
+        return amount != null ? cf.format(amount / units) : null;
+    }
+
+    /**
+     * Convertiert einen Geldbetrag in das Anzeigeformat der Anzeigewährung
+     *
+     * @param amount Betrag
+     * @return Anzeigeformat
+     */
+    @TypeConverter
+    public static String convertLongCurrency(Long amount) {
         return amount != null ? NumberFormat
                 .getCurrencyInstance()
                 .format(amount / units) : null;

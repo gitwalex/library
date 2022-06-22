@@ -13,8 +13,18 @@ import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg moreTables: String?) :
+abstract class LiveTable<T>(
+    private val db: RoomDatabase, table: String, vararg moreTables: String?,
+    private val invalidationTracker: InvalidationListener<T>,
+) :
     MutableLiveData<T>(), CoroutineScope {
+
+    constructor(db: RoomDatabase, table: String, vararg moreTables: String?) : this(db, table, *moreTables,
+        invalidationTracker = object : InvalidationListener<T>() {
+            override fun onInvalidated(tables: Set<String>): T? {
+                return this.onInvalidated(tables)
+            }
+        })
 
     override val coroutineContext: CoroutineContext get() = Dispatchers.IO + job
     private var job = Job()
@@ -32,8 +42,7 @@ abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg 
                 Log.d("gerwalex", "DatabaseTable invalidated ($tables) in $this@LiveTable")
             }
         }
-        tables = HashSet(Arrays.asList(*moreTables))
-        tables.add(table)
+        tables = HashSet(Arrays.asList(*moreTables, table))
     }
 
     /**
@@ -44,21 +53,15 @@ abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg 
     protected fun invalidate(tables: Set<String>) {
         launch {
             loading.postValue(true)
-            onInvalidated(tables)?.let {
-                postValue(it)
-            }
+            invalidationTracker
+                .onInvalidated(tables)
+                ?.let {
+                    postValue(it)
+                }
             loading.postValue(false)
         }
     }
 
-    /**
-     * Lädt Daten.
-     *
-     * @param tables Namen der geänderten Tabellen. null, wenn direkt [.invalidate]
-     * aufgerufen wurde.
-     * @return T
-     */
-    protected abstract suspend fun onInvalidated(tables: Set<String>): T?
     final override fun observeForever(observer: Observer<in T>) {
         throw IllegalStateException(
             "observeForever() zur Vermeidung von MemoryLeaks nicht möglich. Datenbank erhält Referenz auf " +

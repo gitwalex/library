@@ -26,7 +26,7 @@ object PermissionUtil {
     }
 
     private fun getPermissionState(
-        activity: Activity?,
+        activity: Activity,
         result: MutableMap<String, Boolean>,
     ): PermissionState {
         val deniedList: List<String> = result
@@ -43,9 +43,7 @@ object PermissionUtil {
 
         if (state == PermissionState.Denied) {
             val permanentlyMappedList = deniedList.map {
-                activity?.let { activity ->
-                    shouldShowRequestPermissionRationale(activity, it)
-                }
+                shouldShowRequestPermissionRationale(activity, it)
             }
 
             if (permanentlyMappedList.contains(false)) {
@@ -58,7 +56,7 @@ object PermissionUtil {
     fun Fragment.registerPermission(onPermissionResult: (PermissionState) -> Unit): Permission {
         return Permission(
             this.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                onPermissionResult(getPermissionState(activity, it as MutableMap<String, Boolean>))
+                onPermissionResult(getPermissionState(requireActivity(), it as MutableMap<String, Boolean>))
             }
         )
     }
