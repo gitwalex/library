@@ -1,6 +1,6 @@
 package com.gerwalex.lib.database
 
-abstract class InvalidationListener<T> {
+fun interface InvalidationListener<T> {
 
     /**
      * Lädt Daten.
@@ -9,5 +9,5 @@ abstract class InvalidationListener<T> {
      * aufgerufen wurde.
      * @return T
      */
-    abstract fun onInvalidated(tables: Set<String>): T?
+    fun onInvalidated(tables: Set<String>): T?
 }
