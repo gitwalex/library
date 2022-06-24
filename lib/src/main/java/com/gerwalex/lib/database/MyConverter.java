@@ -52,17 +52,16 @@ public class MyConverter {
     public static String convertCurrency(float amount) {
         return cf.format(amount / units);
     }
-
-    /**
-     * Convertiert einen Geldbetrag in das Anzeigeformat der Anzeigewährung
-     *
-     * @param amount Betrag
-     * @return Anzeigeformat
-     */
-    @TypeConverter
-    public static String convertCurrency(Long amount) {
-        return amount != null ? cf.format(amount / units) : null;
-    }
+    //    /**
+    //     * Convertiert einen Geldbetrag in das Anzeigeformat der Anzeigewährung
+    //     *
+    //     * @param amount Betrag
+    //     * @return Anzeigeformat
+    //     */
+    //    @TypeConverter
+    //    public static String convertCurrency(Long amount) {
+    //        return amount != null ? cf.format(amount / units) : null;
+    //    }
 
     /**
      * Convertiert einen Geldbetrag in das Anzeigeformat der Anzeigewährung
