@@ -24,7 +24,7 @@ public class MyConverter {
     private static final DecimalFormat cf = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.getDefault());
     private static final DateFormat di = DateFormat.getDateInstance(DateFormat.DEFAULT);
     @SuppressLint("ConstantLocale")
-    private static final double units = Math.pow(10, Currency
+    public static final double units = Math.pow(10, Currency
             .getInstance(Locale.getDefault())
             .getDefaultFractionDigits());
     public static LabelFormatter currencyLabelFormatter = MyConverter::convertCurrency;

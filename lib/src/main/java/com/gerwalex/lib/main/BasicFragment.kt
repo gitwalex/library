@@ -128,6 +128,10 @@ abstract class BasicFragment : Fragment(), Observable {
         super.onCreate(savedInstanceState)
         if (savedInstanceState != null) {
             args.putAll(savedInstanceState)
+        } else {
+            arguments?.let {
+                args.putAll(it)
+            }
         }
     }
 
@@ -208,15 +212,15 @@ abstract class BasicFragment : Fragment(), Observable {
             it.title = title
             args.putCharSequence(BasicActivity.ACTIONBARTITLE, title)
         }
+    }
 
-        /**
-         * Setzt den Title in der SupportActionBar
-         *
-         * @param titleResID resID des Titles
-         */
-        fun setTitle(titleResID: Int) {
-            setTitle(getString(titleResID))
-        }
+    /**
+     * Setzt den Title in der SupportActionBar
+     *
+     * @param titleResID resID des Titles
+     */
+    fun setTitle(titleResID: Int) {
+        setTitle(getString(titleResID))
     }
 
     companion object {

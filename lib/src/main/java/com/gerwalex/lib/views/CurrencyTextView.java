@@ -48,7 +48,7 @@ public class CurrencyTextView extends AppCompatTextView {
     @BindingAdapter(value = {"value", "valueAttrChanged"}, requireAll = false)
     public static void setValue(CurrencyTextView view, long value, InverseBindingListener listener) {
         view.mBindingListener = listener;
-        view.setValue(new BigDecimal(value));
+        view.setValue(value);
     }
 
     public CurrencyTextView(Context context) {
@@ -75,7 +75,7 @@ public class CurrencyTextView extends AppCompatTextView {
     }
 
     public long getValue() {
-        return value.longValue();
+        return (long) (value.doubleValue() * MyConverter.units);
     }
 
     /**
@@ -102,7 +102,7 @@ public class CurrencyTextView extends AppCompatTextView {
     }
 
     public void setValue(long amount) {
-        setValue(new BigDecimal(amount));
+        setValue(new BigDecimal(amount / MyConverter.units));
     }
 
     private void init(Context context, AttributeSet attrs) {
