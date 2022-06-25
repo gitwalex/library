@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
+@Deprecated("LiveTable is deprecated.", level = DeprecationLevel.WARNING)
 abstract class LiveTable<T>(private val db: RoomDatabase, table: String, vararg moreTables: String?) :
     MutableLiveData<T>(), CoroutineScope {
 

@@ -10,31 +10,43 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.util.*
 import kotlin.coroutines.CoroutineContext
 
 open class LiveTableNew<T>(
     private val db: RoomDatabase, table: String,
-    val invalidationTracker: InvalidationListener<T>,
+    private val invalidationTracker: InvalidationListener<T>,
 ) : MutableLiveData<T>(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext get() = Dispatchers.IO + job
     private var job = Job()
-    protected val tables: MutableSet<String>
-    private val tracker: InvalidationTracker.Observer
+    private val table: String
+    private lateinit var tables: HashSet<String>
+    private var tracker: InvalidationTracker.Observer
     val loading = MutableLiveData<Boolean>()
     fun invalidate() {
         invalidate(tables)
     }
 
     init {
+        this.table = table
         tracker = object : InvalidationTracker.Observer(table) {
             override fun onInvalidated(tables: Set<String>) {
                 invalidate(tables)
                 Log.d("gerwalex", "DatabaseTable invalidated ($tables) in $this@LiveTable")
             }
         }
-        tables = HashSet(Arrays.asList(table))
+    }
+
+    fun observeAlsoTables(vararg moreTables: String) {
+        tables.addAll(moreTables)
+        db.invalidationTracker.removeObserver(tracker)
+        tracker = object : InvalidationTracker.Observer(table, *tables.toTypedArray()) {
+            override fun onInvalidated(tables: Set<String>) {
+                invalidate(tables)
+                Log.d("gerwalex", "DatabaseTable invalidated ($tables) in $this@LiveTable")
+            }
+        }
+        db.invalidationTracker.addObserver(tracker)
     }
 
     /**

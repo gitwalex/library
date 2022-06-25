@@ -12,9 +12,8 @@ class MyConverterTest {
         val a = MyConverter.convertCurrency(1.00f)
         val b = MyConverter.convertCurrency(BigDecimal(0.01))
         val c = MyConverter.convertCurrency(1L)
-        val d = MyConverter.convertLongCurrency(1L)
         assertTrue(a == b)
         assertTrue(a == c)
-        assertTrue(a == d)
+        assertTrue(b == c)
     }
 }

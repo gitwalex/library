@@ -21,12 +21,12 @@ public class MyConverter {
     @Ignore
     public static final long NACHKOMMA = 1000000L;
     @SuppressLint("ConstantLocale")
-    private static final DecimalFormat cf = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.getDefault());
-    private static final DateFormat di = DateFormat.getDateInstance(DateFormat.DEFAULT);
-    @SuppressLint("ConstantLocale")
     public static final double units = Math.pow(10, Currency
             .getInstance(Locale.getDefault())
             .getDefaultFractionDigits());
+    @SuppressLint("ConstantLocale")
+    private static final DecimalFormat cf = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.getDefault());
+    private static final DateFormat di = DateFormat.getDateInstance(DateFormat.DEFAULT);
     public static LabelFormatter currencyLabelFormatter = MyConverter::convertCurrency;
     public static LabelFormatter percentLabelFormatter = MyConverter::convertPercent;
 
@@ -70,7 +70,7 @@ public class MyConverter {
      * @return Anzeigeformat
      */
     @TypeConverter
-    public static String convertLongCurrency(Long amount) {
+    public static String convertCurrency(Long amount) {
         return amount != null ? NumberFormat
                 .getCurrencyInstance()
                 .format(amount / units) : null;
