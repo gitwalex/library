@@ -40,9 +40,9 @@ abstract class CursorAdapter : BaseSwipeDragDropAdapter() {
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        cursor?.run {
-            moveToPosition(position)
-            onBindViewHolder(holder, this, position)
+        cursor?.let {
+            it.moveToPosition(position)
+            onBindViewHolder(holder, it, position)
         }
     }
 
@@ -54,11 +54,9 @@ abstract class CursorAdapter : BaseSwipeDragDropAdapter() {
      * @param c new Cursor
      */
     @CallSuper
-    open fun swap(c: Cursor?) {
+    open fun swap(c: Cursor) {
         cursor = c
-        if (c != null) {
-            mRowIdColumnIndex = c.getColumnIndex("_id")
-        }
+        mRowIdColumnIndex = c.getColumnIndex("_id")
         notifyDataSetChanged()
     }
 

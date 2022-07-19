@@ -3,7 +3,6 @@ package com.gerwalex.lib.database
 import android.util.Log
 import androidx.annotation.CallSuper
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.room.InvalidationTracker
 import androidx.room.RoomDatabase
 import kotlinx.coroutines.CoroutineScope
@@ -13,33 +12,33 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
 open class LiveTableNew<T>(
-    private val db: RoomDatabase, table: String,
+    private val db: RoomDatabase, private val table: String,
     private val invalidationTracker: InvalidationListener<T>,
 ) : MutableLiveData<T>(), CoroutineScope {
 
     override val coroutineContext: CoroutineContext get() = Dispatchers.IO + job
     private var job = Job()
-    private val table: String
-    private lateinit var tables: HashSet<String>
-    private var tracker: InvalidationTracker.Observer
+    private val tables = HashSet<String>()
+    private lateinit var tracker: InvalidationTracker.Observer
     val loading = MutableLiveData<Boolean>()
     fun invalidate() {
         invalidate(tables)
     }
 
     init {
-        this.table = table
-        tracker = object : InvalidationTracker.Observer(table) {
-            override fun onInvalidated(tables: Set<String>) {
-                invalidate(tables)
-                Log.d("gerwalex", "DatabaseTable invalidated ($tables) in $this@LiveTable")
-            }
-        }
+        tables.add(table)
+        observeTables(table)
     }
 
     fun observeAlsoTables(vararg moreTables: String) {
+        observeTables(table, *moreTables)
+    }
+
+    private fun observeTables(table: String, vararg moreTables: String) {
         tables.addAll(moreTables)
-        db.invalidationTracker.removeObserver(tracker)
+        if (::tracker.isInitialized) {
+            db.invalidationTracker.removeObserver(tracker)
+        }
         tracker = object : InvalidationTracker.Observer(table, *tables.toTypedArray()) {
             override fun onInvalidated(tables: Set<String>) {
                 invalidate(tables)
@@ -64,13 +63,6 @@ open class LiveTableNew<T>(
                 }
             loading.postValue(false)
         }
-    }
-
-    final override fun observeForever(observer: Observer<in T>) {
-        throw IllegalStateException(
-            "observeForever() zur Vermeidung von MemoryLeaks nicht möglich. Datenbank erhält Referenz auf " +
-                    javaClass.name
-        )
     }
 
     @CallSuper
