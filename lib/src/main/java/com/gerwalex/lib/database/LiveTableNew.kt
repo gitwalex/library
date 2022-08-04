@@ -76,6 +76,18 @@ open class LiveTableNew<T>(
         super.onInactive()
         db.invalidationTracker.removeObserver(tracker)
     }
+
+    fun interface InvalidationListener<T> {
+
+        /**
+         * Lädt Daten.
+         *
+         * @param tables Namen der geänderten Tabellen. null, wenn direkt [.invalidate]
+         * aufgerufen wurde.
+         * @return T
+         */
+        suspend fun onInvalidated(tables: Set<String>): T?
+    }
 }
 
 
