@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import com.gerwalex.demo.R
 import com.gerwalex.demo.databinding.FragmentPermissionsBinding
 import com.gerwalex.lib.main.BasicFragment
-import com.gerwalex.lib.permissions.PermissionUtil
-import com.gerwalex.lib.permissions.PermissionUtil.launchMultiplePermission
-import com.gerwalex.lib.permissions.PermissionUtil.launchSinglePermission
-import com.gerwalex.lib.permissions.PermissionUtil.registerPermission
+import com.gerwalex.lib.permissions.Permission
+import com.gerwalex.lib.permissions.launchMultiplePermission
+import com.gerwalex.lib.permissions.launchSinglePermission
+import com.gerwalex.lib.permissions.registerPermission
 import com.google.android.material.snackbar.Snackbar
 
 class FragmentPermission : BasicFragment() {
@@ -22,20 +22,19 @@ class FragmentPermission : BasicFragment() {
     private val storagePermission = registerPermission {
         onStoragePermissionResult(it)
     }
-
-    private fun onStoragePermissionResult(state: PermissionUtil.PermissionState) {
+    private fun onStoragePermissionResult(state: Permission.PermissionState) {
         when (state) {
-            PermissionUtil.PermissionState.Denied -> {
+            Permission.PermissionState.Denied -> {
                 Snackbar
                     .make(requireView(), R.string.permission_denied, Snackbar.LENGTH_LONG)
                     .show()
             }
-            PermissionUtil.PermissionState.Granted -> {
+            Permission.PermissionState.Granted -> {
                 Snackbar
                     .make(requireView(), R.string.permission_granted, Snackbar.LENGTH_LONG)
                     .show()
             }
-            PermissionUtil.PermissionState.PermanentlyDenied -> {
+            Permission.PermissionState.PermanentlyDenied -> {
                 Snackbar
                     .make(requireView(), R.string.permission_permamently_denied, Snackbar.LENGTH_LONG)
                     .show()
@@ -43,19 +42,19 @@ class FragmentPermission : BasicFragment() {
         }
     }
 
-    private fun onCameraPermissionResult(state: PermissionUtil.PermissionState) {
+    private fun onCameraPermissionResult(state: Permission.PermissionState) {
         when (state) {
-            PermissionUtil.PermissionState.Denied -> {
+            Permission.PermissionState.Denied -> {
                 Snackbar
                     .make(requireView(), R.string.permission_denied, Snackbar.LENGTH_LONG)
                     .show()
             }
-            PermissionUtil.PermissionState.Granted -> {
+            Permission.PermissionState.Granted -> {
                 Snackbar
                     .make(requireView(), R.string.permission_granted, Snackbar.LENGTH_LONG)
                     .show()
             }
-            PermissionUtil.PermissionState.PermanentlyDenied -> {
+            Permission.PermissionState.PermanentlyDenied -> {
                 Snackbar
                     .make(requireView(), R.string.permission_permamently_denied, Snackbar.LENGTH_LONG)
                     .show()

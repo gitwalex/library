@@ -151,14 +151,14 @@ class Permission private constructor(
  * Registriert PermissionRequest ohne ResultHandler. In diesem Fall muss beim launch dann ein Resulthandler
  * mitgeliefert werden.
  */
-fun Fragment.registerPermissionNew(): Permission {
+fun Fragment.registerPermission(): Permission {
     return Permission(this, null)
 }
 
 /**
  * Registriert PermissionRequest mit ResultHandler
  */
-fun Fragment.registerPermissionNew(onPermissionRequestResult: Permission.OnPermissionResult): Permission {
+fun Fragment.registerPermission(onPermissionRequestResult: Permission.OnPermissionResult): Permission {
     return Permission(this, onPermissionRequestResult)
 }
 
@@ -166,14 +166,14 @@ fun Fragment.registerPermissionNew(onPermissionRequestResult: Permission.OnPermi
  * Registriert PermissionRequest ohne ResultHandler. In diesem Fall muss beim launch dann ein Resulthandler
  * mitgeliefert werden.
  */
-fun Activity.registerPermissionNew(): Permission {
+fun Activity.registerPermission(): Permission {
     return Permission(this, null)
 }
 
 /**
  * Registriert PermissionRequest mit ResultHandler
  */
-fun Activity.registerPermissionNew(onPermissionRequestResult: Permission.OnPermissionResult): Permission {
+fun Activity.registerPermission(onPermissionRequestResult: Permission.OnPermissionResult): Permission {
     return Permission(this, onPermissionRequestResult)
 }
 
