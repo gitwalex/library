@@ -1,31 +1,115 @@
 package com.gerwalex.lib.permissions
 
-import android.app.Activity
-import android.os.Bundle
-import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
-import androidx.fragment.app.Fragment
-
 /**
  * Util für Permissions.
- *
- * Wie funktionieren Permissions? : https://medium.com/@sharmaprateek196/registerforactivityresult-api-ask-android-permissions-in-a-cooler-way-55acc3bb2895
  *
  * Mit freundlicher Unterstützung von
  *
  * https://hamurcuabi.medium.com/permissions-with-the-easiest-way-9c466ab1b2c1
  *
  */
-object PermissionUtil {
+import android.app.Activity
+import android.content.pm.PackageManager
+import androidx.activity.result.ActivityResultCaller
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
 
-    @JvmInline
-    value class Permission(val launcher: ActivityResultLauncher<Array<String>>)
+/**
+ * Util für Permissions.
+ *
+ * Mit freundlicher Unterstützung von
+ *
+ * https://hamurcuabi.medium.com/permissions-with-the-easiest-way-9c466ab1b2c1
+ *
+ */
+class Permission private constructor(
+    private val caller: ActivityResultCaller,
+    var onPermissionRequestResult: OnPermissionResult? = null,
+) {
+
+    constructor(
+        caller: Activity,
+        onPermissionRequestResult: OnPermissionResult? = null,
+    ) : this(caller as ActivityResultCaller, onPermissionRequestResult)
+
+    constructor(
+        caller: Fragment,
+        onPermissionRequestResult: OnPermissionResult? = null,
+    ) : this(caller as ActivityResultCaller, onPermissionRequestResult)
 
     /**
-     * Mögliche Ergebnisse für launch(Single|Multiple)Permission
+     * activity: lateinit, da beim Aufruf ein Fargment noch nicht attacched ist.
+     */
+    private lateinit var activity: Activity
+    private val launcher: ActivityResultLauncher<Array<String>>
+
+    init {
+        launcher = caller.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
+            onPermissionRequestResult(it)
+        }
+    }
+
+    /**
+     * Wird nach Berechtigungabfrage oder nach Prüfung der launch-Voraussetzungen gerufen.
+     */
+    private fun onPermissionRequestResult(it: Map<String, Boolean>) {
+        onPermissionRequestResult!!.onPermissionResult(getPermissionStateNew(activity,
+            it as MutableMap<String, Boolean>))
+    }
+
+    /**
+     * Resulthandler: Functional Callback interface
+     */
+    fun interface OnPermissionResult {
+
+        /**
+         * Called after receiving a result
+         */
+        fun onPermissionResult(result: PermissionState)
+    }
+
+    /**
+     * Prüft die Vorausstzungen für Berechtigungsabfrage:
+     *
+     * 1. activity kann ermittelt werden.
+     * 2. Es sind noch nicht alle Berechtigungen vorhanden. (untested)
+     *
+     * Alle Berechtigungen vorhanden: Direkter Aufruf von Permission#onPermissionRequestResult, ansonsten
+     * Start der Berechtigungsabfrage.
+     */
+    fun launch(
+        permissionList: Array<String>, onPermissionRequestResult: OnPermissionResult,
+    ) {
+        this.onPermissionRequestResult = onPermissionRequestResult
+        activity = when (caller) {
+            is Fragment -> caller.requireActivity()
+            is Activity -> caller
+            else -> throw IllegalArgumentException("cannot determine Acivity")
+        }
+        val map = HashMap<String, Boolean>()
+        permissionList.forEach {
+            map[it] = ActivityCompat.checkSelfPermission(activity, it) == PackageManager.PERMISSION_GRANTED
+        }
+        val deniedList: List<String> = map
+            .filter {
+                it.value.not()
+            }
+            .map {
+                it.key
+            }
+        if (deniedList.isEmpty()) {
+            onPermissionRequestResult(map)
+        } else {
+            launcher.launch(permissionList)
+        }
+    }
+
+    /**
+     * Mögliche Ergebnisse für launch(Single|Multiple)Permission:
+     *
+     *Granted, Denied, PermanmentlyDenied
      */
     sealed class PermissionState {
 
@@ -34,10 +118,10 @@ object PermissionUtil {
         object PermanentlyDenied : PermissionState()
     }
 
-    private fun getPermissionState(
-        activity: Activity,
-        result: MutableMap<String, Boolean>,
-    ): PermissionState {
+    /**
+     * Ermttlung der vergebenen Berechtigungen
+     */
+    private fun getPermissionStateNew(activity: Activity, result: MutableMap<String, Boolean>): PermissionState {
         val deniedList: List<String> = result
             .filter {
                 it.value.not()
@@ -52,7 +136,7 @@ object PermissionUtil {
 
         if (state == PermissionState.Denied) {
             val permanentlyMappedList = deniedList.map {
-                shouldShowRequestPermissionRationale(activity, it)
+                ActivityCompat.shouldShowRequestPermissionRationale(activity, it)
             }
 
             if (permanentlyMappedList.contains(false)) {
@@ -61,80 +145,75 @@ object PermissionUtil {
         }
         return state
     }
-
-    /**
-     * Permission-Extension für Fragment. Hier Behandlung des Ergebnisses. Muss beim Start initialisiert werden.
-     */
-    fun Fragment.registerPermission(onPermissionResult: (PermissionState) -> Unit): Permission {
-        return Permission(
-            this.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                onPermissionResult(getPermissionState(requireActivity(), it as MutableMap<String, Boolean>))
-            }
-        )
-    }
-
-    /**
-     * Permission-Extension für Activity. Hier Behandlung des Ergebnisses. Muss beim Start initialisiert werden.
-     */
-    fun AppCompatActivity.registerPermission(onPermissionResult: (PermissionState) -> Unit): Permission {
-        return Permission(
-            this.registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-                onPermissionResult(getPermissionState(this, it as MutableMap<String, Boolean>))
-            }
-        )
-    }
-
-    /**
-     * Abholen einer Permission(später im Code)
-     */
-    fun Permission.launchSinglePermission(permission: String) {
-        this.launcher.launch(arrayOf(permission))
-    }
-
-    /**
-     * Abholen einer Permission(später im Code)
-     */
-    fun Permission.launchMultiplePermission(permissionList: Array<String>) {
-        this.launcher.launch(permissionList)
-    }
-
-    class Example : Fragment() {
-
-        /**
-         * Register for launch for Permission.
-         */
-        private val registerForPermission =
-            registerPermission { result ->
-                when (result) {
-                    PermissionState.Granted -> {
-                        // ok, Permission granted
-                        Toast
-                            .makeText(requireContext(), "Permission is accepted", Toast.LENGTH_SHORT)
-                            .show()
-                        // do Stuff when granted
-                    }
-                    PermissionState.Denied -> {
-                        Toast
-                            .makeText(requireContext(), "Permission is declined", Toast.LENGTH_SHORT)
-                            .show()
-                        // do Stuff when denied
-                    }
-                    PermissionState.PermanentlyDenied -> {
-                        // do Stuff when premaently denied
-                    }
-                }
-            }
-
-        /**
-         * Hier launch for Permission. Permission wird als Parameter mitgegeben
-         */
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            // [..] Single Permission
-            registerForPermission.launchSinglePermission(android.Manifest.permission.BLUETOOTH_CONNECT)
-            // [..] Multiple Permission, hier bluetooth und Settings
-            registerForPermission.launchMultiplePermission(arrayOf(android.Manifest.permission.BLUETOOTH_CONNECT,
-                android.Manifest.permission.WRITE_SETTINGS))
-        }
-    }
 }
+
+/**
+ * Registriert PermissionRequest ohne ResultHandler. In diesem Fall muss beim launch dann ein Resulthandler
+ * mitgeliefert werden.
+ */
+fun Fragment.registerPermissionNew(): Permission {
+    return Permission(this, null)
+}
+
+/**
+ * Registriert PermissionRequest mit ResultHandler
+ */
+fun Fragment.registerPermissionNew(onPermissionRequestResult: Permission.OnPermissionResult): Permission {
+    return Permission(this, onPermissionRequestResult)
+}
+
+/**
+ * Registriert PermissionRequest ohne ResultHandler. In diesem Fall muss beim launch dann ein Resulthandler
+ * mitgeliefert werden.
+ */
+fun Activity.registerPermissionNew(): Permission {
+    return Permission(this, null)
+}
+
+/**
+ * Registriert PermissionRequest mit ResultHandler
+ */
+fun Activity.registerPermissionNew(onPermissionRequestResult: Permission.OnPermissionResult): Permission {
+    return Permission(this, onPermissionRequestResult)
+}
+
+/**
+ * Prüft und startet Permissionabfrage. Wurde bei der Registrierung bereits ein Resulthandler mitgegeben, wird eine
+ * IllegallStateException geworfen
+ */
+fun Permission.launchSinglePermission(
+    permission: String,
+    onPermissionRequestResult: Permission.OnPermissionResult,
+) {
+    launchMultiplePermission(arrayOf(permission), onPermissionRequestResult)
+}
+
+/**
+ * Prüft und startet Permissionabfrage. Wurde bei der Registrierung kein Resulthandler mitgegeben, wird eine
+ * IllegallStateException geworfen
+ */
+fun Permission.launchSinglePermission(permission: String) {
+    launchMultiplePermission(arrayOf(permission))
+}
+
+/**
+ * Abholen einer Permission(später im Code)
+ */
+fun Permission.launchMultiplePermission(permissionList: Array<String>) {
+    onPermissionRequestResult?.let {
+        launchMultiplePermission(permissionList, it)
+    } ?: throw IllegalStateException("Do not know what to do with PermissionResult")
+}
+
+/**
+ * Abholen einer Permission(später im Code)
+ */
+fun Permission.launchMultiplePermission(
+    permissionList: Array<String>,
+    onPermissionRequestResult: Permission.OnPermissionResult,
+) {
+    this.onPermissionRequestResult?.let {
+        throw IllegalStateException("Duplicate ResultHandler: Registration and launch")
+    } ?: this.launch(permissionList, onPermissionRequestResult)
+}
+

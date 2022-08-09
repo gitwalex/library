@@ -7,7 +7,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 
-@Deprecated("Please use ActivityResultUtil")
 class ActivityResultWrapper<Input, Result> private constructor(
     caller: ActivityResultCaller,
     contract: ActivityResultContract<Input, Result>,

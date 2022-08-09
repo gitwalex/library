@@ -6,18 +6,16 @@ import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
 
 class ActivityResultUtil<Input, Result>(
     caller: ActivityResultCaller,
     contract: ActivityResultContract<Input, Result>,
-    private val onActivityResult: OnActivityResult<Result>,
+    private var onActivityResult: OnActivityResult<Result>? = null,
 ) {
 
     private val launcher: ActivityResultLauncher<Input>
     private fun callOnActivityResult(result: Result) {
-        onActivityResult.onActivityResult(result)
+        onActivityResult?.onActivityResult(result)
     }
 
     /**
@@ -28,45 +26,44 @@ class ActivityResultUtil<Input, Result>(
         launcher.launch(input)
     }
 
+    /**
+     * Launch activity, same as [ActivityResultLauncher.launch] except that it allows a callback
+     * executed after receiving a result from the target activity.
+     */
+    fun launch(input: Input, onActivityResult: OnActivityResult<Result>) {
+        this.onActivityResult = onActivityResult
+        launcher.launch(input)
+    }
+
     init {
         launcher = caller.registerForActivityResult(contract) { result: Result -> callOnActivityResult(result) }
     }
 }
 
 /**
- * Specialised method for launching new activities.
+ * Registriert StartActivityForResult
+ *
+ * @param onActivityResult Resulthandler wird gerufen, wenn der launch ein Ergebnis gebracht hat. Kann leer/null sein,
+ * dann wird der Resulthandler beim launch erwartet. Ist er dort auch leer/null, wird der Aufruf durhcgeführt, aber kein
+ * Ergebnis geliefert.
  */
-fun Fragment.registerActivityForResult(onActivityResult: OnActivityResult<ActivityResult>):
+fun ActivityResultCaller.registerActivityForResult(onActivityResult: OnActivityResult<ActivityResult>? = null):
         ActivityResultUtil<Intent, ActivityResult> {
     return registerForActivityResult(StartActivityForResult(), onActivityResult)
 }
 
 /**
- * Specialised method for launching new activities.
+ * Regisriert ActivityForResult
+ *
+ * @param contract der ActivityResultContract.
+ *
+ * @param onActivityResult Resulthandler wird gerufen, wenn der launch ein Ergebnis gebracht hat. Kann leer/null sein,
+ * dann wird der Resulthandler beim launch erwartet. Ist er dort auch leer/null, wird der Aufruf durhcgeführt, aber kein
+ * Ergebnis geliefert.
  */
-fun AppCompatActivity.registerActivityForResult(onActivityResult: OnActivityResult<ActivityResult>):
-        ActivityResultUtil<Intent, ActivityResult> {
-    return registerForActivityResult(StartActivityForResult(), onActivityResult)
-}
-
-/**
- * Register activity result using a [ActivityResultContract] and an in-place activity result callback like
- * the default approach. You can still customise callback using [.launch].
- */
-fun <Input, Result> AppCompatActivity.registerForActivityResult(
+fun <Input, Result> ActivityResultCaller.registerForActivityResult(
     contract: ActivityResultContract<Input, Result>,
-    onActivityResult: OnActivityResult<Result>,
-): ActivityResultUtil<Input, Result> {
-    return ActivityResultUtil(this, contract, onActivityResult)
-}
-
-/**
- * Register activity result using a [ActivityResultContract] and an in-place activity result callback like
- * the default approach. You can still customise callback using [.launch].
- */
-fun <Input, Result> Fragment.registerForActivityResult(
-    contract: ActivityResultContract<Input, Result>,
-    onActivityResult: OnActivityResult<Result>,
+    onActivityResult: OnActivityResult<Result>? = null,
 ): ActivityResultUtil<Input, Result> {
     return ActivityResultUtil(this, contract, onActivityResult)
 }
