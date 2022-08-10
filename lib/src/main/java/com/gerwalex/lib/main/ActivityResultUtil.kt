@@ -6,76 +6,72 @@ import androidx.activity.result.ActivityResultCaller
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+object ActivityForResultUtil {
+    class ActivityResultUtil<Input, Result>(
+        caller: ActivityResultCaller,
+        contract: ActivityResultContract<Input, Result>,
+    ) {
 
-class ActivityResultUtil<Input, Result>(
-    caller: ActivityResultCaller,
-    contract: ActivityResultContract<Input, Result>,
-    private var onActivityResult: OnActivityResult<Result>? = null,
-) {
+        private lateinit var onActivityResult: OnActivityResult<Result>
+        private val launcher: ActivityResultLauncher<Input>
 
-    private val launcher: ActivityResultLauncher<Input>
-    private fun callOnActivityResult(result: Result) {
-        onActivityResult?.onActivityResult(result)
+        init {
+            launcher = caller.registerForActivityResult(contract) { result: Result -> callOnActivityResult(result) }
+        }
+
+        private fun callOnActivityResult(result: Result) {
+            onActivityResult.onActivityResult(result)
+        }
+
+        /**
+         * Executes an {@link ActivityResultContract}.
+         *
+         * <p>This method throws {@link android.content.ActivityNotFoundException}
+         * if there was no Activity found to run the given Intent.
+
+         * @param input the input required to execute an {@link ActivityResultContract}.
+         *
+         * @throws android.content.ActivityNotFoundException
+         */
+        fun launch(input: Input, onActivityResult: OnActivityResult<Result>) {
+            this.onActivityResult = onActivityResult
+            launcher.launch(input)
+        }
     }
 
     /**
-     * Launch activity, same as [ActivityResultLauncher.launch] except that it allows a callback
-     * executed after receiving a result from the target activity.
+     * Regisriert ActivityForResult für StartActivityForResult
+     *
+     * @param onActivityResult Resulthandler
      */
-    fun launch(input: Input) {
-        launcher.launch(input)
+    @JvmStatic
+    fun ActivityResultCaller.registerActivityForResult():
+            ActivityResultUtil<Intent, ActivityResult> {
+        return registerForActivityResult(StartActivityForResult())
     }
 
     /**
-     * Launch activity, same as [ActivityResultLauncher.launch] except that it allows a callback
-     * executed after receiving a result from the target activity.
+     * Regisriert ActivityForResult
+     *
+     * @param contract der ActivityResultContract.
+     *
+     * @param onActivityResult Resulthandler
      */
-    fun launch(input: Input, onActivityResult: OnActivityResult<Result>) {
-        this.onActivityResult = onActivityResult
-        launcher.launch(input)
+    @JvmStatic
+    fun <Input, Result> ActivityResultCaller.registerForActivityResult(
+        contract: ActivityResultContract<Input, Result>,
+    ): ActivityResultUtil<Input, Result> {
+        return ActivityResultUtil(this, contract)
     }
-
-    init {
-        launcher = caller.registerForActivityResult(contract) { result: Result -> callOnActivityResult(result) }
-    }
-}
-
-/**
- * Registriert StartActivityForResult
- *
- * @param onActivityResult Resulthandler wird gerufen, wenn der launch ein Ergebnis gebracht hat. Kann leer/null sein,
- * dann wird der Resulthandler beim launch erwartet. Ist er dort auch leer/null, wird der Aufruf durhcgeführt, aber kein
- * Ergebnis geliefert.
- */
-fun ActivityResultCaller.registerActivityForResult(onActivityResult: OnActivityResult<ActivityResult>? = null):
-        ActivityResultUtil<Intent, ActivityResult> {
-    return registerForActivityResult(StartActivityForResult(), onActivityResult)
-}
-
-/**
- * Regisriert ActivityForResult
- *
- * @param contract der ActivityResultContract.
- *
- * @param onActivityResult Resulthandler wird gerufen, wenn der launch ein Ergebnis gebracht hat. Kann leer/null sein,
- * dann wird der Resulthandler beim launch erwartet. Ist er dort auch leer/null, wird der Aufruf durhcgeführt, aber kein
- * Ergebnis geliefert.
- */
-fun <Input, Result> ActivityResultCaller.registerForActivityResult(
-    contract: ActivityResultContract<Input, Result>,
-    onActivityResult: OnActivityResult<Result>? = null,
-): ActivityResultUtil<Input, Result> {
-    return ActivityResultUtil(this, contract, onActivityResult)
-}
-
-/**
- * Callback interface
- */
-fun interface OnActivityResult<O> {
 
     /**
-     * Called after receiving a result from the target activity
+     * Callback interface
      */
-    fun onActivityResult(result: O)
-}
+    fun interface OnActivityResult<O> {
 
+        /**
+         * Called after receiving a result from the target activity
+         */
+        fun onActivityResult(result: O)
+    }
+}
