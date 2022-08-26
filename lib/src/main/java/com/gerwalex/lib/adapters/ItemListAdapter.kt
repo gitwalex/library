@@ -1,5 +1,6 @@
 package com.gerwalex.lib.adapters
 
+import android.annotation.SuppressLint
 import androidx.annotation.CallSuper
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
@@ -7,11 +8,16 @@ import java.util.*
 abstract class ItemListAdapter<T> @JvmOverloads constructor(private val myList: MutableList<T> = ArrayList()) :
     ItemListAdapterTemplate<T>() {
 
-    override fun add(item: T) {
-        myList.add(item)
-        notifyItemInserted(myList.size - 1)
+    fun add(index: Int, item: T) {
+        myList.add(index, item)
+        notifyItemInserted(index)
     }
 
+    override fun add(item: T) {
+        add(myList.size - 1, item)
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun addAll(items: List<T>) {
         myList.addAll(items)
         notifyDataSetChanged()
@@ -53,6 +59,7 @@ abstract class ItemListAdapter<T> @JvmOverloads constructor(private val myList: 
         notifyItemChanged(toPosition)
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @CallSuper
     override fun replace(items: List<T>) {
         myList.clear()
@@ -65,5 +72,9 @@ abstract class ItemListAdapter<T> @JvmOverloads constructor(private val myList: 
         myList.removeAt(position)
         myList.add(position, item)
         notifyItemChanged(position)
+    }
+
+    fun remove(index: Int): T {
+        return myList.removeAt(index)
     }
 }
