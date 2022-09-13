@@ -21,20 +21,10 @@ public class SectionsPagerAdapter extends androidx.viewpager2.adapter.FragmentSt
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        Fragment f;
+        Fragment f = null;
         int reverse = getItemCount() - 1 - position;
         switch (reverse) {
-            case 0:
-                f = new FragmentImageDecoView();
-                break;
             case 1:
-                f = new FragmentFirework();
-                break;
-            case 2:
-                f = new FragmentKonfetti();
-                break;
-            case 3:
-                f = new FragmentPermission();
                 break;
             default:
                 throw new IllegalStateException("Fragment für Position nicht bekannt");
