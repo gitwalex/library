@@ -1,11 +1,10 @@
-package com.gerwalex.library.ads
+package com.gerwalex.library.helper.ads
 
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -41,7 +40,6 @@ fun BannerAdView(adSize: AdSize, adUnitId: String, modifier: Modifier = Modifier
             text = "BannerAdView Here",
         )
     } else {
-        HorizontalDivider()
         AndroidView(
             modifier = modifier.fillMaxWidth(),
             factory = { context ->
@@ -56,7 +54,6 @@ fun BannerAdView(adSize: AdSize, adUnitId: String, modifier: Modifier = Modifier
                 }
             }
         )
-        HorizontalDivider()
     }
 }
 
@@ -78,7 +75,6 @@ fun BannerAdView(
             text = "BannerAdView Here",
         )
     } else {
-        HorizontalDivider()
         BoxWithConstraints(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
@@ -103,7 +99,6 @@ fun BannerAdView(
                 }
             )
         }
-        HorizontalDivider()
     }
 }
 

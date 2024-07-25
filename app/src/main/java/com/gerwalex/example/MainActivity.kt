@@ -12,7 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.gerwalex.example.ui.theme.LibraryTheme
-import com.gerwalex.library.ads.BannerAdView
+import com.gerwalex.library.helper.ads.BannerAdView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
