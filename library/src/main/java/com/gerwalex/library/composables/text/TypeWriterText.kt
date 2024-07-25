@@ -18,6 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.TextStyle
 
+/**
+ * Typewrite Text Animation
+ *
+ * * @see <a href="https://medium.com/@kappdev/crafting-typewrite-text-animation-custom-quote-card-with-jetpack-compose-92ab76582efb">Typewrite Text Animation</a>
+ *
+ */
 @Composable
 fun TypewriteText(
     text: String,

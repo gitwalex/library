@@ -58,6 +58,8 @@ private const val TAG = "AutoSizeText"
  *  4. Font scaling support: User-initiated font scaling doesn't affect the visual rendering output.
  *  5. Multiline Support with maxLines Parameter.
  * @author Reda El Madini - For support, contact gladiatorkilo@gmail.com
+ *
+ * @see <a href="https://stackoverflow.com/questions/63971569/androidautosizetexttype-in-jetpack-compose">How to use AutoSizeText in Jetpack Compose</a>
  */
 @Composable
 fun AutoSizeText(
