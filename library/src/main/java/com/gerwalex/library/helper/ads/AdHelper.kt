@@ -59,10 +59,47 @@ fun BannerAdView(adSize: AdSize, adUnitId: String, modifier: Modifier = Modifier
 
 @Composable
 fun BannerAdView(
-    adUnitId: String, maxHeight: Int,
+    adUnitId: String,
+    maxHeight: Int,
     modifier: Modifier = Modifier,
-    adListener: AdListener? = null,
+    onAdClicked: () -> Unit = {},
+    onAdClosed: () -> Unit = {},
+    onAdFailedToLoad: (adError: LoadAdError) -> Unit = {},
+    onAdImpression: () -> Unit = {},
+    onAdLoaded: () -> Unit = {},
+    onAdOpened: () -> Unit = {},
+    onAdSwipeGestureClicked: () -> Unit = {},
 ) {
+    val adListener = object : AdListener() {
+        override fun onAdClicked() {
+            onAdClicked()
+        }
+
+        override fun onAdClosed() {
+            onAdClosed()
+        }
+
+        override fun onAdFailedToLoad(p0: LoadAdError) {
+            onAdFailedToLoad(p0)
+        }
+
+        override fun onAdImpression() {
+            onAdImpression()
+        }
+
+        override fun onAdLoaded() {
+            onAdLoaded()
+        }
+
+        override fun onAdOpened() {
+            onAdOpened()
+        }
+
+        override fun onAdSwipeGestureClicked() {
+            onAdSwipeGestureClicked()
+        }
+    }
+
     val isInEditMode = LocalInspectionMode.current
     if (isInEditMode) {
         Text(
@@ -76,7 +113,7 @@ fun BannerAdView(
         )
     } else {
         BoxWithConstraints(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier,
             contentAlignment = Alignment.Center
         ) {
             val adSize = remember {
@@ -85,15 +122,15 @@ fun BannerAdView(
                 )
             }
             AndroidView(
-                modifier = modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 factory = { context ->
-                    AdView(context).apply {
-                        setAdSize(adSize)
-                        adListener?.let { this.adListener = it }
-                        this.adUnitId = adUnitId
+                    AdView(context).also {
+                        it.setAdSize(adSize)
+                        it.adListener = adListener
+                        it.adUnitId = adUnitId
                         AdRequest.Builder().build().apply {
                             Log.d("AdHelpder", "isTestDevice: ${this.isTestDevice(context)}")
-                            loadAd(this)
+                            it.loadAd(this)
                         }
                     }
                 }
