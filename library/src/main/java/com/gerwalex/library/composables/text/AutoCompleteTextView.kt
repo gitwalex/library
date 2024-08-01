@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -53,7 +54,6 @@ import androidx.compose.ui.window.PopupProperties
 import com.gerwalex.library.ext.toIntPx
 import kotlin.math.max
 
-
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun <T> AutoCompleteTextView(
@@ -78,7 +78,7 @@ fun <T> AutoCompleteTextView(
         }
 
     }
-    Box(modifier = modifier) {
+    Box(modifier = modifier.fillMaxWidth()) {
         QuerySearch(
             query = initialQuery,
             label = queryLabel,
@@ -97,23 +97,52 @@ fun <T> AutoCompleteTextView(
             }
 
         )
+        val fieldHeight = OutlinedTextFieldDefaults.MinHeight.toIntPx()
         AnimatedVisibility(visible = shouldShowDropdown) {
             Popup(
-                popupPositionProvider = WindowCenterOffsetPositionProvider(),
+                popupPositionProvider = object : PopupPositionProvider {
+                    override fun calculatePosition(
+                        anchorBounds: IntRect,
+                        windowSize: IntSize,
+                        layoutDirection: LayoutDirection,
+                        popupContentSize: IntSize
+                    ): IntOffset {
+                        Log.d(
+                            "AutocompleteTextView",
+                            "calculatePosition: $anchorBounds | $windowSize | " +
+                                    "$layoutDirection | $popupContentSize"
+                        )
+                        val offset =
+                            if (anchorBounds.bottom + popupContentSize.height > windowSize.height) {
+                                IntOffset(
+                                    anchorBounds.left,
+                                    max(anchorBounds.top - popupContentSize.height, 0)
+                                )
+                            } else {
+                                IntOffset(anchorBounds.left, anchorBounds.top + fieldHeight)
+
+                            }
+                        Log.d("AutocompleteTextView", "calculatePosition: $offset")
+                        return offset
+
+                    }
+
+                },
                 properties = PopupProperties(
                     dismissOnClickOutside = true,
                     usePlatformDefaultWidth = true
                 ),
+
                 onDismissRequest = {
                     onDismissRequest()
                 }
             ) {
                 LazyColumn(
                     modifier = modifier
-                        .fillMaxWidth()
                         .heightIn(max = TextFieldDefaults.MinHeight * textLines)
+                        .widthIn(min = 120.dp)
                         .border(BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface))
-                        .background(MaterialTheme.colorScheme.background),
+                        .background(MaterialTheme.colorScheme.inverseOnSurface),
                     state = lazyListState,
                 ) {
                     items(list) {
@@ -135,31 +164,6 @@ fun <T> AutoCompleteTextView(
     }
 }
 
-class WindowCenterOffsetPositionProvider : PopupPositionProvider {
-    override fun calculatePosition(
-        anchorBounds: IntRect,
-        windowSize: IntSize,
-        layoutDirection: LayoutDirection,
-        popupContentSize: IntSize
-    ): IntOffset {
-        Log.d(
-            "AutocompleteTextView", "calculatePosition: $anchorBounds | $windowSize | " +
-                    "$layoutDirection | $popupContentSize"
-        )
-        val offset = if (anchorBounds.bottom + popupContentSize.height > windowSize.height) {
-            IntOffset(anchorBounds.left, max(anchorBounds.top - popupContentSize.height, 0))
-        } else {
-            IntOffset(
-                anchorBounds.left,
-                anchorBounds.top + OutlinedTextFieldDefaults.MinHeight.value.toIntPx()
-            )
-
-        }
-//        val offset = IntOffset(anchorBounds.left, anchorBounds.bottom)
-        Log.d("AutocompleteTextView", "calculatePosition: $offset")
-        return offset
-    }
-}
 
 @Composable
 fun QuerySearch(
@@ -173,16 +177,18 @@ fun QuerySearch(
 
 
     var showClearButton by remember { mutableStateOf(false) }
-    var textFieldValueState by remember(query) { mutableStateOf(TextFieldValue(text = query)) }
+    var textFieldValueState by remember(query) {
+        mutableStateOf(
+            TextFieldValue(
+                text = query,
+                selection = TextRange(query.length)
+            )
+        )
+    }
     OutlinedTextField(
         modifier = Modifier
             .onFocusChanged { focusState ->
                 showClearButton = focusState.isFocused
-                if (focusState.isFocused) {
-                    textFieldValueState = textFieldValueState.copy(
-                        selection = TextRange(0, textFieldValueState.text.length)
-                    )
-                }
                 onFocusChanged(focusState.isFocused)
             },
 
@@ -238,4 +244,3 @@ fun AutoCompleteTextViewPreview() {
         //}
     }
 }
-
