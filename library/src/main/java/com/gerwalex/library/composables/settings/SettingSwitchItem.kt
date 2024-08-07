@@ -1,63 +1,64 @@
 package com.gerwalex.library.composables.settings
 
-import android.content.res.Configuration.UI_MODE_NIGHT_NO
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-import com.gerwalex.library.composables.AppTheme
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingSwitchItem(
-    name: String,
-    isChecked: Boolean,
+    title: String,
+    checked: Boolean,
+    onCheckedChange: suspend (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    description: String? = null,
+    descriptionStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     enabled: Boolean = true,
-    onClick: () -> Unit,
 ) {
-
-    Surface(
-        color = Color.Transparent,
-        modifier = modifier,
-        onClick = { if (enabled) onClick() },
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = name,
-                style = MaterialTheme.typography.titleMedium,
-                textAlign = TextAlign.Start,
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Switch(
+    val scope = rememberCoroutineScope()
+    Row(
+        modifier = modifier
+            .defaultMinSize(minHeight = 48.dp)
+            .fillMaxWidth()
+            .toggleable(
+                value = checked,
                 enabled = enabled,
-                checked = isChecked,
-                onCheckedChange = { onClick() }
-            )
-        }
+                role = Role.Switch,
+                onValueChange = {
+                    scope.launch {
+                        onCheckedChange(it)
+                    }
+                }
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Preference(
+            modifier = Modifier.weight(1.0f),
+            title = title,
+            titleStyle = titleStyle,
+            description = description,
+            descriptionStyle = descriptionStyle,
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = null,
+            enabled = enabled,
+            colors = SwitchDefaults.colors()
+
+
+        )
     }
 }
 
-@Preview(name = "Light", uiMode = UI_MODE_NIGHT_NO)
-@Preview(name = "Dark", uiMode = UI_MODE_NIGHT_YES)
-@Composable
-fun SwitchTest() {
-    AppTheme {
-        Surface {
-            SettingSwitchItem("Text", true) {}
-
-        }
-    }
-}

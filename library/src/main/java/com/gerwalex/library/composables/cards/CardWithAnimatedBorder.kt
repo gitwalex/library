@@ -24,23 +24,20 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-val cardBorderColors: List<Color> =
-    listOf(
-        Color(0xFFFF595A),
-        Color(0xFFFFC766),
-        Color(0xFF35A07F),
-        Color(0xFF35A07F),
-        Color(0xFFFFC766),
-        Color(0xFFFF595A)
-    )
-
 @Composable
 fun CardWithAnimatedBorder(
     modifier: Modifier = Modifier,
     borderSize: Dp = 5.dp,
     tween: Int = 3500,
     onCardClick: () -> Unit = {},
-    borderColors: List<Color> = cardBorderColors,
+    borderColors: List<Color> = listOf(
+        Color(0xFFFF595A),
+        Color(0xFFFFC766),
+        Color(0xFF35A07F),
+        Color(0xFF35A07F),
+        Color(0xFFFFC766),
+        Color(0xFFFF595A)
+    ),
     content: @Composable () -> Unit
 ) {
     val infiniteTransition = rememberInfiniteTransition()
