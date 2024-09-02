@@ -21,7 +21,7 @@ import com.gerwalex.library.composables.AppTheme
 fun Preference(
     title: String,
     modifier: Modifier = Modifier,
-    titleStyle: TextStyle = MaterialTheme.typography.titleLarge,
+    titleStyle: TextStyle = MaterialTheme.typography.titleMedium,
     description: String? = null,
     descriptionStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     onClick: () -> Unit = { },

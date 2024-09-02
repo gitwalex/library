@@ -4,15 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.gerwalex.example.ui.theme.AutoCompleteTextViewExample
 import com.gerwalex.example.ui.theme.LibraryTheme
-import com.gerwalex.library.helper.ads.BannerAdView
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,16 +25,21 @@ class MainActivity : ComponentActivity() {
         setContent {
             LibraryTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    BannerAdView(
-                        maxHeight = 80,
-                        adUnitId = "",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                    ) {
+                        OutlinedTextField(value = "DUmmy", onValueChange = {})
+                        AutoCompleteTextViewExample()
+                        HorizontalDivider()
+                    }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {

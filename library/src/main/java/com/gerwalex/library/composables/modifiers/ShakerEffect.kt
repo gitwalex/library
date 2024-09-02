@@ -1,4 +1,4 @@
-package com.gerwalex.haicard.ext.modifiers
+package com.gerwalex.library.composables.modifiers
 
 import android.util.Log
 import androidx.compose.animation.core.Animatable

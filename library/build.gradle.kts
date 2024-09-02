@@ -54,7 +54,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.google.play.ads)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -75,6 +74,9 @@ dependencies {
 
     // GoogleSignIn
     implementation(libs.bundles.credentials)
+
+    // Ktor
+    implementation(libs.bundles.ktor)
 }
 
 publishing {

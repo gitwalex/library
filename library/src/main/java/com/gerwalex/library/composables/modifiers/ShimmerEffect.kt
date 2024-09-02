@@ -1,4 +1,4 @@
-package com.gerwalex.haicard.ext.modifiers
+package com.gerwalex.library.composables.modifiers
 
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateFloat

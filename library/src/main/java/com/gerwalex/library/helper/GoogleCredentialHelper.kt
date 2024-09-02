@@ -1,4 +1,4 @@
-package com.gerwalex.haicard.helper
+package com.gerwalex.library.helper
 
 import android.content.Context
 import android.util.Log
