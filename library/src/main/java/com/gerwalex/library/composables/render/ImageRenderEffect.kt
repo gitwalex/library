@@ -30,6 +30,26 @@ import com.gerwalex.library.composables.animation.ImageFadeInOutAnimation
 import com.gerwalex.library.composables.container.BlurContainer
 import com.gerwalex.library.composables.container.ShaderContainer
 
+/**
+ * Applies a blur effect to an image represented by a [Painter].
+ *
+ * This composable displays an image with a dynamically animated blur effect. The blur effect
+ * starts with a maximum blur radius and then animates to zero, creating a focus-in effect,
+ * and then back to a minimal blur. This effect will loop for the duration the composable is visible.
+ *
+ * **Note:**
+ * - This composable requires Android API level S (31) or higher.
+ * - On Android Tiramisu (API 33) and above, it utilizes the `ShaderContainer` for improved
+ *   blur rendering performance and quality.
+ * - On Android versions below Tiramisu it will use the regular Blur modifier.
+ *
+ * @param painter The [Painter] representing the image to be displayed.
+ * @param modifier The [Modifier] to be applied to the container of the image and blur effect.
+ *                 Defaults to [Modifier].
+ *
+ * @see Blur
+ * @see ShaderContainer
+ */
 @RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun ImageRenderEffect(painter: Painter, modifier: Modifier = Modifier) {

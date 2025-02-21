@@ -24,6 +24,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 
+/**
+ * Applies a shimmer effect to a composable.
+ *
+ * This modifier creates a shimmering animation that can be applied to any composable.
+ * It achieves this by creating a linear gradient that moves horizontally across the composable's
+ * background, giving the illusion of a "shine" or shimmer.
+ *
+ * The animation consists of a gradient moving from left to right, repeating infinitely.
+ * The gradient colors are a light gray, dark gray, and light gray, creating a subtle shimmer effect.
+ * The animation speed and shimmer width can be adjusted by changing the `tween` duration and number of times of the size width, respectively.
+ *
+ * The shimmer effect is clipped to a rounded rectangle shape with a corner radius of 6.dp.
+ *
+ * @return A `Modifier` that applies the shimmer effect.
+ *
+ * Example usage:
+ * ```kotlin
+ * Box(modifier = Modifier
+ *     .fillMaxWidth()
+ *     .height(100.dp)
+ *     .shimmerEffect()) {
+ *     // Content to be shimmered
+ *     Text("Shimmering Text", color = Color.White)
+ * }
+ * ```
+ */
 @Composable
 fun Modifier.shimmerEffect(): Modifier {
     var size by remember {

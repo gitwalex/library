@@ -50,6 +50,14 @@ import kotlinx.coroutines.launch
 
 /**
  *  @see <a href="https://medium.com/@kappdev/how-to-create-a-countdown-snackbar-in-android-with-jetpack-compose-d58bcd8011cf"> Countdown Snackbar</a>
+ * A customizable Snackbar with a countdown timer.
+ *
+ * This composable displays a Snackbar with a built-in countdown timer. The timer is visualized as a progress indicator
+ * and displays the remaining seconds. It automatically dismisses the Snackbar when the timer reaches zero.
+ *
+ * @param snackbarData The data associated with the Snackbar, including the message, action, and dismiss action.
+ * @param modifier Modifier for styling and layout of the Snackbar.
+ * @param durationInSeconds The duration of the countdown timer in seconds. Defaults to 5 seconds.
  */
 @Composable
 fun CountdownSnackbar(

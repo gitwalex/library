@@ -39,6 +39,22 @@ import androidx.compose.ui.unit.dp
 import com.gerwalex.library.composables.container.BlurContainer
 import com.gerwalex.library.composables.container.ShaderContainer
 
+/**
+ * A Composable function that demonstrates an extended floating action button (FAB) animation effect.
+ *
+ * This function creates a main FAB (Add icon) and three additional FABs (Edit, LocationOn, Delete) that
+ * appear/disappear with an animation when the main FAB is clicked.
+ *
+ * The main FAB rotates 45 degrees when expanded and the child FABs fade in and slide up.
+ *
+ * @RequiresApi Requires Android API level TIRAMISU (33) or higher due to the use of `ShaderContainer`.
+ *
+ *  **Functionality:**
+ *  - **Main FAB:** Located at the bottom-end of the screen. When clicked, it triggers the expansion/collapse
+ *    of the additional FABs. The icon rotates 45 degrees when expanded.
+ *  - **Child FABs (Edit, LocationOn, Delete):** Appear/disappear with a fade-in/fade-out effect and a sliding animation.
+ *    They are positioned above the main FAB at different offsets.
+ */
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @Composable
 fun ExtendedFabRenderEffect() {

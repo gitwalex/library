@@ -33,6 +33,9 @@ val RAINBOW = listOf(
 )
 
 
+/**
+ * Represents the shape of a confetti piece.
+ */
 fun Modifier.confetti(
     contentColors: List<Color> = RAINBOW,
     confettiShape: ConfettiShape = ConfettiShape.Mixed,
@@ -88,6 +91,19 @@ enum class ConfettiShape {
     Circle
 }
 
+/**
+ * Represents the state of the confetti animation.
+ *
+ * This data class holds the current state of the confetti particles, including their
+ * positions, colors, shapes, the size of the confetti area, and the speed of the particles.
+ *
+ * @property confetti A list of [Confetto] objects representing the individual confetti particles.
+ * @property colors A list of [Color] objects that will be used to color the confetti particles.
+ * @property confettiShape The shape of the confetti particles, represented by a [ConfettiShape] object.
+ * @property size The [IntSize] of the area where the confetti is displayed. This determines the
+ *                 boundaries within which confetti particles will move.
+ * @property speed The speed at which the confetti particles will move. Higher values result in faster movement.
+ */
 data class ConfettiState(
     val confetti: List<Confetto> = emptyList(),
     val colors: List<Color>,
@@ -160,7 +176,7 @@ class Confetto(
         }
     }
 
-    fun draw(canvas: Canvas): Unit {
+    fun draw(canvas: Canvas) {
 
         when (shape) {
             ConfettiShape.Circle -> {
