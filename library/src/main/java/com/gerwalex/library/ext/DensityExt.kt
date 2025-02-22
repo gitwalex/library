@@ -200,3 +200,4 @@ fun Density.intOffsetToDpOffset(intOffset: IntOffset) = DpOffset(intOffset.x.toD
 fun IntOffset.toDpOffset() = LocalDensity.current.intOffsetToDpOffset(this)
 
 fun IntOffset.toOffset() = Offset(x.toFloat(), y.toFloat())
+
