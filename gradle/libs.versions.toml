@@ -1,19 +1,19 @@
 [versions]
 agp = "8.8.1"
-kotlin = "2.0.0"
+kotlin = "2.1.0"
 
-activityCompose = "1.9.1"
+activityCompose = "1.10.0"
 appcompat = "1.7.0"
-composeBom = "2024.06.00"
-credentials = "1.3.0-rc01"
-coreKtx = "1.13.1"
+composeBom = "2025.02.00"
+credentials = "1.3.0"
+coreKtx = "1.15.0"
 espressoCore = "3.6.1"
-googlePlayAds = "23.2.0"
+googlePlayAds = "23.6.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 ktor = "2.3.12"
-lifecycleRuntimeKtx = "2.8.4"
-inAppReview-ktx = "2.0.1"
+lifecycleRuntimeKtx = "2.8.7"
+inAppReview-ktx = "2.0.2"
 googleid = "1.1.1"
 
 [libraries]

@@ -28,18 +28,19 @@ import androidx.core.view.WindowCompat
 
 @Immutable
 class MyColors(
+    internal
     val material: ColorScheme,
 )
 
 
-lateinit var themeColors: MyColors
+internal lateinit var themeColors: MyColors
 
 /**
  * AppTheme mit CustomColors
  * https://gustav-karlsson.medium.com/extending-the-jetpack-compose-material-theme-with-more-colors-e1b849390d50
  */
 @Composable
-fun AppTheme(
+internal fun AppTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
