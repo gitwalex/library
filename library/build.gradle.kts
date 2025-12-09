@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.gerwalex.library"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 21
@@ -61,9 +61,10 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation(libs.bundles.material)
     implementation(libs.androidx.appcompat)
     implementation(libs.review.ktx)
+    implementation(libs.google.play.ads)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

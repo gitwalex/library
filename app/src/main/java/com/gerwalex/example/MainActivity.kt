@@ -16,43 +16,51 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.gerwalex.example.ui.theme.AutoCompleteTextViewExample
 import com.gerwalex.example.ui.theme.LibraryTheme
+import com.gerwalex.library.composables.ads.manager.BannerAdsConsentManager
+import com.google.android.gms.ads.AdView
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 
 class MainActivity : ComponentActivity() {
+    private val ADUNITID = "ca-app-pub-3940256099942544/9214589741"
+
+    @OptIn(ExperimentalAtomicApi::class)
+    private val isMobileAdsInitializeCalled = AtomicBoolean(false)
+    private var adView: AdView? = null
+    private lateinit var googleMobileAdsConsentManager: BannerAdsConsentManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            LibraryTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(innerPadding)
-                    ) {
-                        OutlinedTextField(value = "DUmmy", onValueChange = {})
-                        AutoCompleteTextViewExample()
-                        HorizontalDivider()
-                    }
-                }
-            }
+            Content()
         }
     }
 }
 
-
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+fun Content() {
+    LibraryTheme {
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+            ) {
+                OutlinedTextField(value = "DUmmy", onValueChange = {})
+//                AutoCompleteTextViewExample()
+                HorizontalDivider()
+                DragDropLazyColumnExmple()
+            }
+        }
+    }
+
 }
+
 
 @Preview(showBackground = true)
 @Composable
 fun GreetingPreview() {
-    LibraryTheme {
-        Greeting("Android")
-    }
+    Content()
 }
