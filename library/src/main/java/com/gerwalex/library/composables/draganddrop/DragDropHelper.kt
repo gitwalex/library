@@ -1,41 +1,41 @@
-package com.gerwalex.example
+package com.gerwalex.library.composables.draganddrop
 
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Card
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-data class DragDropListItem(
-    val id: Long,
-    val text: String,
-)
 
-
+/**
+ * State manager for drag-and-drop functionality within a `LazyColumn` or `LazyRow`.
+ *
+ * This class holds the state related to a drag-and-drop operation, such as the currently
+ * dragged item, its displacement, and the logic to handle drag events. It collaborates
+ * with a [LazyListState] to get information about the list's layout and trigger scroll
+ * events.
+ *
+ * An instance of this class is typically created and remembered using [rememberDragAndDropListState].
+ *
+ * @param lazyListState The state of the lazy list, used to access item positions and layout information.
+ * @param onMove A callback function that is invoked when an item is successfully moved to a new position.
+ *               It provides the `from` index (the original position) and the `to` index (the new position).
+ *               This callback is responsible for updating the underlying data list.
+ */
 class DragAndDropListState(
     val lazyListState: LazyListState,
     private val onMove: (Int, Int) -> Unit
@@ -45,17 +45,40 @@ class DragAndDropListState(
     var currentIndexOfDraggedItem by mutableStateOf<Int?>(null)
     private val initialOffsets: Pair<Int, Int>?
         get() = initialDraggingElement?.let { Pair(it.offset, it.offsetEnd) }
+
+    /**
+     * The vertical displacement of the currently dragged element.
+     *
+     * This value is `null` if no item is being dragged. Otherwise, it represents the
+     * difference between the initial drag position and the current position of the item,
+     * effectively how much the item's composable should be translated on the Y-axis
+     * to follow the user's finger.
+     */
     val elementDisplacement: Float?
         get() = currentIndexOfDraggedItem?.let {
             lazyListState.getVisibleItemInfo(it)
         }?.let { itemInfo ->
             (initialDraggingElement?.offset ?: 0f).toFloat() + draggingDistance - itemInfo.offset
         }
+
+    /**
+     * The [LazyListItemInfo] of the item currently being dragged.
+     * This is `null` if no item is being dragged.
+     */
     private val currentElement: LazyListItemInfo?
         get() = currentIndexOfDraggedItem?.let {
             lazyListState.getVisibleItemInfo(it)
         }
 
+    /**
+     * Handles the initiation of a drag gesture.
+     *
+     * This function is called when a long-press gesture is detected. It identifies which
+     * list item is being dragged based on the initial touch offset and sets up the
+     * initial state for the drag operation.
+     *
+     * @param offset The position of the initial touch event within the lazy list's coordinate space.
+     */
     fun onDragStart(offset: Offset) {
         lazyListState.layoutInfo.visibleItemsInfo
             .firstOrNull { item -> offset.y.toInt() in item.offset..item.offsetEnd }
@@ -71,6 +94,16 @@ class DragAndDropListState(
         draggingDistance = 0f
     }
 
+    /**
+     * Handles the movement of the dragged item.
+     *
+     * This function is called continuously as the user drags their finger. It updates the
+     * `draggingDistance` and calculates the new position of the dragged item. If the item
+     * is dragged over another item, it triggers the `onMove` callback to reorder the list
+     * and updates the `currentIndexOfDraggedItem`.
+     *
+     * @param offset The change in position since the last drag event.
+     */
     fun onDrag(offset: Offset) {
         draggingDistance += offset.y
 
@@ -127,6 +160,19 @@ class DragAndDropListState(
         get() = this.offset + this.size
 }
 
+/**
+ * Creates and remembers a [DragAndDropListState] for a lazy list.
+ * This state is essential for managing the drag-and-drop behavior, including tracking
+ * the dragged item, its position, and triggering move callbacks.
+ *
+ * @param lazyListState The [LazyListState] of the `LazyColumn` or `LazyRow` to which
+ *                      drag-and-drop functionality is being added. This is used to access
+ *                      layout information and control scrolling.
+ * @param onMove A callback function that is invoked when a dragged item is moved to a new
+ *               position. It provides the 'from' and 'to' indices, allowing you to update
+ *               your underlying data source accordingly.
+ * @return A remembered instance of [DragAndDropListState].
+ */
 @Composable
 fun rememberDragAndDropListState(
     lazyListState: LazyListState,
@@ -141,15 +187,18 @@ fun <T> MutableList<T>.move(from: Int, to: Int) {
     this.add(to, element)
 }
 
-@Composable
-fun DragDropLazyColumnExmple() {
-    val list = mutableStateListOf<DragDropListItem>()
-    for (index in 0..20L) {
-        list.add(DragDropListItem(index, "Item $index"))
-    }
-    DragDropLazyColumnExmple(list)
-}
-
+/**
+ * A modifier that enables drag-and-drop functionality for a `LazyColumn` or `LazyRow`.
+ * It detects long-press gestures to initiate a drag, handles the drag events, and manages
+ * auto-scrolling when the dragged item reaches the edges of the viewport.
+ *
+ * This modifier should be applied to the `LazyColumn` or `LazyRow` composable itself.
+ *
+ * @param dragAndDropListState The state object that manages the drag-and-drop operation.
+ * @param overscrollJob A reference to a `Job` that can be used to manage the overscroll coroutine.
+ * @param coroutineScope The `CoroutineScope` to launch the overscroll job in.
+ * @return A `Modifier` that adds the drag-and-drop detection logic.
+ */
 fun Modifier.dragContainer(
     dragAndDropListState: DragAndDropListState,
     overscrollJob: Job?,
@@ -171,7 +220,7 @@ fun Modifier.dragContainer(
                         coroutineJob = coroutineScope.launch {
                             dragAndDropListState.lazyListState.scrollBy(it)
                         }
-                    } ?: kotlin.run { coroutineJob?.cancel() }
+                    } ?: run { coroutineJob?.cancel() }
 
             },
             onDragStart = { offset ->
@@ -183,6 +232,19 @@ fun Modifier.dragContainer(
     }
 }
 
+/**
+ * A composable that wraps the content of a lazy list item, making it draggable.
+ *
+ * This function should be used within a `LazyColumn`'s `items` block. It applies a modifier
+ * to the content that handles the visual displacement of the item as it's being dragged.
+ *
+ * @param dragAndDropListState The state object that manages the drag and drop operations for the list.
+ * @param index The index of the item in the list. This is crucial for identifying which item
+ *              is being dragged and calculating its displacement.
+ * @param content The composable content of the list item. It receives a `Modifier` that
+ *                should be applied to the root element of the item's layout to enable the dragging
+ *                visual effect (translationY).
+ */
 @Composable
 fun LazyItemScope.DraggableItem(
     dragAndDropListState: DragAndDropListState,
@@ -202,44 +264,4 @@ fun LazyItemScope.DraggableItem(
     content(draggingModifier)
 }
 
-@Composable
-fun DragDropLazyColumnExmple(list: MutableList<DragDropListItem>) {
-    val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
-    var overscrollJob by remember { mutableStateOf<Job?>(null) }
-    val dragAndDropListState =
-        rememberDragAndDropListState(listState) { from, to ->
-            list.move(from, to)
-        }
-    LazyColumn(
-        modifier = Modifier
-            .padding(8.dp)
-            .dragContainer(
-                dragAndDropListState = dragAndDropListState,
-                overscrollJob = overscrollJob,
-                coroutineScope = coroutineScope
-            ),
-        state = dragAndDropListState.lazyListState
-    ) {
-        itemsIndexed(items = list, key = { _, item -> item.id }) { index, item: DragDropListItem ->
-            DraggableItem(dragAndDropListState, index) {
-                DragDropListItem(
-                    item = item,
-                    modifier = Modifier.animateItem()
-                )
-            }
-        }
-    }
-}
 
-@Composable
-fun DragDropListItem(item: DragDropListItem, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(8.dp)
-    ) {
-        Text(text = item.text)
-        Text(text = item.text)
-    }
-}
