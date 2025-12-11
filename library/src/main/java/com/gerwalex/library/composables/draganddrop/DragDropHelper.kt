@@ -1,5 +1,7 @@
 package com.gerwalex.library.composables.draganddrop
 
+import android.content.ClipData
+import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.lazy.LazyItemScope
@@ -13,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
+import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
@@ -265,4 +268,16 @@ fun LazyItemScope.DraggableItem(
     content(draggingModifier)
 }
 
+@Composable
+fun LazyItemScope.DraggableItem(
+    content: @Composable LazyItemScope.(Modifier) -> Unit
+) {
+    val draggingModifier = Modifier
+        .dragAndDropSource { _ ->
+            DragAndDropTransferData(
+                ClipData.newPlainText("", "")
+            )
+        }
+    content(draggingModifier)
+}
 

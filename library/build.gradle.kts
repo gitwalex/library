@@ -30,6 +30,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
         // Compile für unchecked und deprecation
     }
+
     kotlinOptions {
         jvmTarget = "17"
         freeCompilerArgs = listOf(
@@ -78,6 +79,8 @@ dependencies {
 
     // Ktor
     implementation(libs.bundles.ktor)
+
+    implementation(libs.guava)
 }
 
 publishing {
