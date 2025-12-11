@@ -61,7 +61,7 @@ fun DragDropLazyColumnExample(list: MutableList<DragDropListItem>) {
             DraggableItem(dragAndDropListState, index) {
                 DragDropListItem(
                     item = item,
-                    modifier = Modifier.animateItem()
+                    modifier = it.animateItem()
                 )
             }
         }

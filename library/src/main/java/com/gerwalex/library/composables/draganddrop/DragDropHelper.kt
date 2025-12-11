@@ -205,31 +205,32 @@ fun Modifier.dragContainer(
     coroutineScope: CoroutineScope
 ): Modifier {
     var coroutineJob = overscrollJob
-    return this.pointerInput(Unit) {
-        detectDragGesturesAfterLongPress(
-            onDrag = { change, offset ->
-                change.consume()
-                dragAndDropListState.onDrag(offset)
+    return this
+        .pointerInput(Unit) {
+            detectDragGesturesAfterLongPress(
+                onDrag = { change, offset ->
+                    change.consume()
+                    dragAndDropListState.onDrag(offset)
 
-                if (overscrollJob?.isActive == true) return@detectDragGesturesAfterLongPress
+                    if (overscrollJob?.isActive == true) return@detectDragGesturesAfterLongPress
 
-                dragAndDropListState
-                    .checkOverscroll()
-                    .takeIf { it != 0f }
-                    ?.let {
-                        coroutineJob = coroutineScope.launch {
-                            dragAndDropListState.lazyListState.scrollBy(it)
-                        }
-                    } ?: run { coroutineJob?.cancel() }
+                    dragAndDropListState
+                        .checkOverscroll()
+                        .takeIf { it != 0f }
+                        ?.let {
+                            coroutineJob = coroutineScope.launch {
+                                dragAndDropListState.lazyListState.scrollBy(it)
+                            }
+                        } ?: run { coroutineJob?.cancel() }
 
-            },
-            onDragStart = { offset ->
-                dragAndDropListState.onDragStart(offset)
-            },
-            onDragEnd = { dragAndDropListState.onDragInterrupted() },
-            onDragCancel = { dragAndDropListState.onDragInterrupted() }
-        )
-    }
+                },
+                onDragStart = { offset ->
+                    dragAndDropListState.onDragStart(offset)
+                },
+                onDragEnd = { dragAndDropListState.onDragInterrupted() },
+                onDragCancel = { dragAndDropListState.onDragInterrupted() }
+            )
+        }
 }
 
 /**
