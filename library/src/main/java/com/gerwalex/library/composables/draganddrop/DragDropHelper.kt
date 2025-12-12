@@ -1,10 +1,7 @@
 package com.gerwalex.library.composables.draganddrop
 
-import android.content.ClipData
-import androidx.compose.foundation.draganddrop.dragAndDropSource
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -14,11 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draganddrop.DragAndDropTransferData
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.zIndex
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -236,48 +232,25 @@ fun Modifier.dragContainer(
         }
 }
 
-/**
- * A composable that wraps the content of a lazy list item, making it draggable.
- *
- * This function should be used within a `LazyColumn`'s `items` block. It applies a modifier
- * to the content that handles the visual displacement of the item as it's being dragged.
- *
- * @param dragAndDropListState The state object that manages the drag and drop operations for the list.
- * @param index The index of the item in the list. This is crucial for identifying which item
- *              is being dragged and calculating its displacement.
- * @param content The composable content of the list item. It receives a `Modifier` that
- *                should be applied to the root element of the item's layout to enable the dragging
- *                visual effect (translationY).
- */
-@Composable
-fun LazyItemScope.DraggableItem(
+fun Modifier.dragVisuals(
     dragAndDropListState: DragAndDropListState,
-    index: Int,
-    content: @Composable LazyItemScope.(Modifier) -> Unit
-) {
-    val draggingModifier = Modifier
-        .composed {
-            val offsetOrNull =
-                dragAndDropListState.elementDisplacement.takeIf {
-                    index == dragAndDropListState.currentIndexOfDraggedItem
-                }
-            Modifier.graphicsLayer {
-                translationY = offsetOrNull ?: 0f
-            }
-        }
-    content(draggingModifier)
-}
+    index: Int
+): Modifier {
+    // 1. Logik zur Bestimmung des Offsets und des Drag-Zustands
+    val offsetOrNull = dragAndDropListState.elementDisplacement.takeIf {
+        index == dragAndDropListState.currentIndexOfDraggedItem
+    }
+    val isDragging = offsetOrNull != null
 
-@Composable
-fun LazyItemScope.DraggableItem(
-    content: @Composable LazyItemScope.(Modifier) -> Unit
-) {
-    val draggingModifier = Modifier
-        .dragAndDropSource { _ ->
-            DragAndDropTransferData(
-                ClipData.newPlainText("", "")
-            )
+    // 2. Anwenden der visuellen Effekte
+    return this
+        .zIndex(if (isDragging) 1f else 0f) // Braucht 'Modifier.zIndex'
+        .graphicsLayer { // Braucht 'Modifier.graphicsLayer'
+            // Der Translation-Wert muss in der Lambda-Funktion geholt werden,
+            // da er sich während des Composables ändern kann.
+            translationY = offsetOrNull ?: 0f
+            scaleX = if (isDragging) .9f else 1f
+            scaleY = if (isDragging) .9f else 1f
         }
-    content(draggingModifier)
 }
 

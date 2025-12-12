@@ -16,8 +16,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.gerwalex.library.composables.draganddrop.DraggableItem
 import com.gerwalex.library.composables.draganddrop.dragContainer
+import com.gerwalex.library.composables.draganddrop.dragVisuals
 import com.gerwalex.library.composables.draganddrop.move
 import com.gerwalex.library.composables.draganddrop.rememberDragAndDropListState
 import kotlinx.coroutines.Job
@@ -58,12 +58,13 @@ fun DragDropLazyColumnExample(list: MutableList<DragDropListItem>) {
         state = dragAndDropListState.lazyListState
     ) {
         itemsIndexed(items = list, key = { _, item -> item.id }) { index, item: DragDropListItem ->
-            DraggableItem(dragAndDropListState, index) {
-                DragDropListItem(
-                    item = item,
-                    modifier = it.animateItem()
-                )
-            }
+            DragDropListItem(
+                item = item,
+                modifier =
+                    Modifier
+                        .dragVisuals(dragAndDropListState, index)
+                        .animateItem()
+            )
         }
     }
 }
