@@ -65,7 +65,7 @@ dependencies {
     implementation(libs.bundles.material)
     implementation(libs.androidx.appcompat)
     implementation(libs.review.ktx)
-    implementation(libs.google.play.ads)
+    implementation(libs.androidx.work.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,7 +80,6 @@ dependencies {
     // Ktor
     implementation(libs.bundles.ktor)
 
-    implementation(libs.guava)
 }
 
 publishing {
