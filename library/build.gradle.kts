@@ -1,8 +1,21 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     id("maven-publish")
+}
+kotlin {
+    compilerOptions {
+        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3
+        freeCompilerArgs =
+            listOf(
+                "-Xjavac-arguments='-Xlint:unchecked -Xlint:deprecation'",
+                "-opt-in=kotlin.RequiresOptIn"
+            )
+        jvmTarget = JvmTarget.JVM_17
+    }
 }
 
 android {
@@ -31,13 +44,6 @@ android {
         // Compile für unchecked und deprecation
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
-        freeCompilerArgs = listOf(
-            "-Xjavac-arguments='-Xlint:unchecked -Xlint:deprecation'",
-            "-opt-in=kotlin.RequiresOptIn"
-        )
-    }
     tasks.withType<Test> {
         useJUnitPlatform()
     }
