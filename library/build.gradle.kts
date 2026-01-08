@@ -8,9 +8,10 @@ plugins {
     alias(libs.plugins.dokka)
     id("maven-publish")
 }
+
 kotlin {
     compilerOptions {
-        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3
+//        languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3
         freeCompilerArgs =
             listOf(
                 "-Xjavac-arguments='-Xlint:unchecked -Xlint:deprecation'",
@@ -60,6 +61,12 @@ android {
             withJavadocJar()
         }
     }
+    tasks.dokkaHtml {
+        dokkaSourceSets.configureEach {
+            // Wir löschen die Standard-Quellen und setzen sie manuell neu
+            sourceRoots.from(file("src/main/java"))
+        }
+    }
 }
 
 dependencies {
@@ -102,17 +109,5 @@ publishing {
                 from(components["release"])
             }
         }
-    }
-}
-tasks.dokkaHtml {
-    dokkaSourceSets.configureEach {
-        // Nutze project.layout oder absolute Pfade, das ist cache-freundlicher
-        sourceRoots.from(project.layout.projectDirectory.dir("src/main/java"))
-        // Falls du auch Java-Dateien dokumentieren willst:
-        includeNonPublic.set(false)
-
-        // Optional: Falls du möchtest, dass Dokka
-        // Samples oder READMEs findet
-        reportUndocumented.set(true)
     }
 }
