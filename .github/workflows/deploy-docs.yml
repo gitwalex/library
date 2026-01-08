@@ -2,7 +2,7 @@ name: Deploy Dokka Documentation
 
 on:
   push:
-    branches: [ "main" ] # Oder "master", je nachdem wie dein Haupt-Branch heißt
+    branches: [ "master" ] # Oder "master", je nachdem wie dein Haupt-Branch heißt
 
 permissions:
   contents: read
