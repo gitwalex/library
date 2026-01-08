@@ -2,7 +2,7 @@ name: Deploy Dokka Documentation
 
 on:
   push:
-    branches: [ "master" ] # Oder "master", je nachdem wie dein Haupt-Branch heißt
+    branches: [ "main" ] # Falls dein Haupt-Branch "master" heißt, bitte hier anpassen
 
 permissions:
   contents: read
@@ -19,14 +19,21 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17' # Deine Java-Version
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Generate Documentation with Dokka
-        run: ./gradlew dokkaHtml
+      - name: Generate Documentation
+        # Wir löschen alte Builds und erzwingen die Generierung
+        run: ./gradlew clean :library:dokkaHtml --no-configuration-cache -Porg.gradle.configuration-cache=false
+
+      - name: Debug Output
+        # Dieser Schritt zeigt uns im Log an, ob Dateien existieren
+        run: |
+          echo "Suche nach generierten Dateien in library/build/dokka/html..."
+          ls -R library/build/dokka/html || echo "FEHLER: Ordner wurde nicht erstellt!"
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -34,7 +41,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Dokka generiert die HTML-Dateien standardmäßig hier:
+          # Wir verweisen exakt auf das html-Verzeichnis im library-Modul
           path: 'library/build/dokka/html'
 
       - name: Deploy to GitHub Pages
