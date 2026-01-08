@@ -27,7 +27,7 @@ jobs:
 
       - name: Generate Documentation
         # Wir löschen alte Builds und erzwingen die Generierung
-        run: ./gradlew clean :library:dokkaHtml --no-configuration-cache -Porg.gradle.configuration-cache=false
+        run: ./gradlew clean :library:dokkaHtml --no-configuration-cache -Porg.gradle.configuration-cache=false -Dorg.gradle.configuration-cache=false
 
       - name: Debug Output
         # Dieser Schritt zeigt uns im Log an, ob Dateien existieren

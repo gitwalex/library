@@ -104,3 +104,15 @@ publishing {
         }
     }
 }
+tasks.dokkaHtml {
+    dokkaSourceSets.configureEach {
+        // Nutze project.layout oder absolute Pfade, das ist cache-freundlicher
+        sourceRoots.from(project.layout.projectDirectory.dir("src/main/java"))
+        // Falls du auch Java-Dateien dokumentieren willst:
+        includeNonPublic.set(false)
+
+        // Optional: Falls du möchtest, dass Dokka
+        // Samples oder READMEs findet
+        reportUndocumented.set(true)
+    }
+}
