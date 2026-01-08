@@ -28,8 +28,7 @@ jobs:
       - name: Generate Documentation (Dokka 2.0)
         # Wir nutzen den neuen Task und deaktivieren den Configuration Cache,
         # da Dokka 2.0 hier noch strikt ist.
-        run: ./gradlew dokkaGeneratePublicationHtml --no-configuration-cache
-
+        run: ./gradlew dokkaGeneratePublicationHtml -Porg.gradle.configuration-cache=false --no-configuration-cache
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
