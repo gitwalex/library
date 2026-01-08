@@ -1,4 +1,4 @@
-package com.gerwalex.library.composables.modifiers
+package com.gerwalex.library.modifier
 
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.PaintingStyle
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
-import com.gerwalex.library.composables.modifiers.ConfettiState.Companion.sizeChanged
+import com.gerwalex.library.modifier.ConfettiState.Companion.sizeChanged
 import kotlinx.coroutines.isActive
 import kotlin.math.roundToInt
 

@@ -1,4 +1,4 @@
-package com.gerwalex.library.composables.animation
+package com.gerwalex.library.animation
 
 import android.content.res.Configuration.UI_MODE_NIGHT_NO
 import android.content.res.Configuration.UI_MODE_NIGHT_YES

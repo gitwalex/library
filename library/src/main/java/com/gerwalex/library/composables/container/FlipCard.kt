@@ -1,4 +1,4 @@
-package com.gerwalex.library.composables
+package com.gerwalex.library.compose.components
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -18,7 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.lifecycle.Lifecycle
-import com.gerwalex.library.modifier.ifNotNull
+import com.gerwalex.library.composables.RepeatOnLifecycleEffect
+import com.gerwalex.library.modifier.thenIf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
@@ -82,8 +83,8 @@ fun FlipCard(
     rotationAxis: CardRotationAxis = CardRotationAxis.AxisY,
     autoFlipDelayMillis: Long = 0,
     animationDurationMillis: Int = 400,
-    frontContent: @Composable ColumnScope.() -> Unit = {},
     backContent: @Composable (ColumnScope.() -> Unit)? = null,
+    frontContent: @Composable ColumnScope.() -> Unit,
 
     ) {
     var myCardFace by remember(initialCardFace) { mutableStateOf(initialCardFace) }
@@ -98,8 +99,8 @@ fun FlipCard(
     )
     Box(
         modifier = modifier
-            .ifNotNull(backContent) {
-                Modifier.clickable {
+            .thenIf(backContent != null) {
+                clickable {
                     onCardFaceChangedState(myCardFace)
                 }
             }

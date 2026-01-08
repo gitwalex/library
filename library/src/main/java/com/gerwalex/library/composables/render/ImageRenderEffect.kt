@@ -25,8 +25,8 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.gerwalex.library.R
+import com.gerwalex.library.animation.ImageFadeInOutAnimation
 import com.gerwalex.library.composables.AppTheme
-import com.gerwalex.library.composables.animation.ImageFadeInOutAnimation
 import com.gerwalex.library.composables.container.BlurContainer
 import com.gerwalex.library.composables.container.ShaderContainer
 

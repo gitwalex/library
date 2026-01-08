@@ -1,4 +1,4 @@
-package com.gerwalex.library.composables.modifiers
+package com.gerwalex.library.modifier
 
 import android.util.Log
 import androidx.compose.animation.core.Animatable

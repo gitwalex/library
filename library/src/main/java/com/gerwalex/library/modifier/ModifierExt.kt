@@ -1,4 +1,4 @@
-package com.gerwalex.library.composables.modifiers
+package com.gerwalex.library.modifier
 
 import android.graphics.Picture
 import androidx.compose.animation.core.animateFloatAsState
@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Canvas
 import androidx.compose.ui.graphics.drawscope.draw
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
@@ -113,7 +114,7 @@ fun Modifier.takePictureOfComposable(picture: Picture) =
         // Example that shows how to redirect rendering to an Android Picture and then
         // draw the picture into the original destination
         onDrawWithContent {
-            val pictureCanvas = androidx.compose.ui.graphics.Canvas(
+            val pictureCanvas = Canvas(
                 picture.beginRecording(width, height)
             )
             draw(this, this.layoutDirection, pictureCanvas, this.size) {

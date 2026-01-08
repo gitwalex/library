@@ -30,7 +30,7 @@ data class DragDropListItem(
 
 @Composable
 fun DragDropLazyColumnExample() {
-    val list = mutableStateListOf<DragDropListItem>()
+    val list = remember { mutableStateListOf<DragDropListItem>() }
     for (index in 0..20L) {
         list.add(DragDropListItem(index, "Item $index"))
     }
