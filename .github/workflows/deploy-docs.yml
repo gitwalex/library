@@ -1,8 +1,8 @@
-name: Deploy Dokka Documentation
+name: Deploy Dokka 2.0 Documentation
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -19,14 +19,16 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17' # Deine Java-Version
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Generate Documentation with Dokka
-        run: ./gradlew dokkaHtml
+      - name: Generate Documentation (Dokka 2.0)
+        # Wir nutzen den neuen Task und deaktivieren den Configuration Cache,
+        # da Dokka 2.0 hier noch strikt ist.
+        run: ./gradlew dokkaGeneratePublicationHtml --no-configuration-cache
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -34,7 +36,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Dokka generiert die HTML-Dateien standardmäßig hier:
+          # In Dokka 2.0 liegen die HTML-Dateien standardmäßig hier:
           path: 'build/dokka/html'
 
       - name: Deploy to GitHub Pages

@@ -8,6 +8,11 @@ plugins {
     alias(libs.plugins.dokka)
     id("maven-publish")
 }
+dokka {
+    dokkaPublications.configureEach {
+        moduleName.set("gerwalex Library")
+    }
+}
 kotlin {
     compilerOptions {
         languageVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_3
