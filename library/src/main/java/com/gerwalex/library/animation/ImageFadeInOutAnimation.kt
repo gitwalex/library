@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.util.lerp
 import com.gerwalex.library.R
@@ -78,7 +78,7 @@ fun ImageFadeInOutAnimated(painter: Painter, modifier: Modifier = Modifier) {
 @Preview(name = "Light", uiMode = UI_MODE_NIGHT_NO)
 @Composable
 fun ImageFadeInOutPreview() {
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
     val bitmap = BitmapFactory.decodeResource(
         resources, R.drawable.demo_image
     )

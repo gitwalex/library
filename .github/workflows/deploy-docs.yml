@@ -35,7 +35,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Dokka generiert die HTML-Dateien standardmäßig hier:
-          path: 'build/dokka/html'
+          path: 'library/build/dokka/html'
 
       - name: Deploy to GitHub Pages
         id: deployment
