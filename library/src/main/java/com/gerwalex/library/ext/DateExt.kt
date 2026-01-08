@@ -58,6 +58,22 @@ fun Date.addDays(days: Int): Date {
 }
 
 /**
+ * Adds a specified number of months to a Date.
+ *
+ * This function modifies a [Calendar] instance based on this [Date] by adding
+ * the specified number of months. It handles calendar arithmetic correctly,
+ * for example, adding one month to January 31st will result in the last day of February.
+ *
+ * @param months The number of months to add. Can be a negative value to subtract months.
+ * @return A new [Date] object representing the resulting date.
+ */
+fun Date.addMonth(month: Int): Date {
+    return toCalendar().apply {
+        add(Calendar.MONTH, month)
+    }.time
+}
+
+/**
  * Adds a specified number of hours to a Date.
  *
  * @param hours The number of hours to add.

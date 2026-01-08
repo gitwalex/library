@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
+    // Dokka for Documents in html
+    alias(libs.plugins.dokka)
     id("maven-publish")
 }
 kotlin {
@@ -85,6 +87,7 @@ dependencies {
 
     // Ktor
     implementation(libs.bundles.ktor)
+
 
 }
 
